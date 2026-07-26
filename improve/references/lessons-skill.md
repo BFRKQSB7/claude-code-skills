@@ -10,6 +10,24 @@
 
 ---
 
+## ★★ [2026-07-26] 发布前未检查现有 Release 格式 → 版本号/标题不一致 (置信度: high, 命中: 1)
+
+**Rule**: 创建新 Release 前必须 `gh release list` 查看现有格式（版本号风格、标题结构、正文模板），严格对齐后再创建
+**Wrong**: 直接 `gh release create v2026.07.26 --title "LAN IP..."` — 日期格式版本号 vs 已有 v1.0.0 semver，标题不含 "ACGN Translation Guide" 前缀 → 用户指出格式不统一
+**Right**: 
+1. `gh release list` → 看到 `v1.0.0 — ACGN Translation Guide 首次发布`
+2. 提取模板：版本号 `v<MAJOR>.<MINOR>.<PATCH>`，标题 `vX.Y.Z — ACGN Translation Guide <描述>`，正文 `# vX.Y.Z — <描述>` + 中文分段
+3. 严格套用 → `v1.1.0 — ACGN Translation Guide LAN IP 自动检测 & API 显示统一`
+**Why**: 追加内容不匹配现有格式 = 看起来像两个不相关项目。Release 页面是用户对项目的"第一眼版本履历"——格式跳跃 = 信任度下降。操作前不读现状 = 闭眼写代码。
+**防御**: Phase 2 发布流程增加门禁步骤：
+- [ ] `gh release list` 检查现有 Release 格式（版本号、标题、正文模板）
+- [ ] 新 Release 的 tag/title/body 是否严格套用现有模板？
+- [ ] 创建后 `gh release view <new>` 与最新旧版对比确认格式一致
+
+**再次**: 2026-07-26 — acgn-translation-guide v1.1.0 首次用 `v2026.07.26` 日期 tag，用户指出与 v1.0.0 格式不一致 → 删旧 tag 重建
+
+---
+
 ## ★ [2026-06-21] gh release create --notes 含特殊字符 → bash 吃掉 (置信度: high, 命中: 1)
 
 **Rule**: `gh release create --notes "...inline..."` 中的反引号、`&`、`/dev/null` 等被 bash 解释 → Release body 截断/空白
