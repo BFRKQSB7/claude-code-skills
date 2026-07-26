@@ -6,11 +6,30 @@
 
 ## 通用流程
 
-1. 进入 GitHub 仓库 → **Releases** → **Create a new release**
-2. 填写 Tag `v{版本号}` (新建) / Target: `main` / Title: `{项目名} v{版本号}`
+### 0. 发布前检查（★ 新增门禁，2026-07-26）
+
+```bash
+# 1. 查看现有 Release 格式
+gh release list
+gh release view <latest-tag> --json name,body
+
+# 2. 提取模板：版本号风格？标题结构？正文模板？
+# 3. 新 Release 严格套用现有格式
+```
+
+- [ ] `gh release list` 已查看现有版本号风格（semver / calver / 其他）
+- [ ] 新 tag 命名与现有风格一致
+- [ ] 新 title 与现有标题结构一致
+- [ ] 正文模板与最新旧版对齐
+
+### 1. 创建 Release
+
+1. `gh release list` 确认现有格式 →
+2. 填写 Tag `v{版本号}` (新建) / Target: `main` / Title: 与现有格式一致
 3. 粘贴 Release Notes（用下方对应语言模板）
 4. 上传构建产物（如有）
-5. 点击 **Publish release**
+5. `gh release view <new>` 对比确认格式一致
+6. 点击 **Publish release**
 
 ---
 
