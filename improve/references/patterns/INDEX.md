@@ -8,10 +8,10 @@
 | Pattern | 文件 | 教训数 | 覆盖 |
 |---------|------|--------|------|
 | Async | [lessons-pattern-async.md](lessons-pattern-async.md) | 4 | 超时/竞态/限流/顺序假设 + 5语言差异表 |
-| Loop | [lessons-pattern-loop.md](lessons-pattern-loop.md) | — | 修改迭代对象/闭包/进度/O(N²) |
+| Loop | [lessons-pattern-loop.md](lessons-pattern-loop.md) | 4 | 修改迭代对象/闭包/进度/O(N²) |
 | Error | [lessons-pattern-error.md](lessons-pattern-error.md) | 4 | 吞错误/无上下文/异常链断裂/类型太粗 + 5语言差异表 |
-| I/O | [lessons-pattern-io.md](lessons-pattern-io.md) | 4 | 资源泄漏/外部输入校验/大文件OOM/编码假设 + 5语言差异表 |
-| Type | [lessons-pattern-type.md](lessons-pattern-type.md) | — | 宽类型/any传染/null缩窄/enum穷举 |
+| I/O | [lessons-pattern-io.md](lessons-pattern-io.md) | 6 | 资源泄漏/外部输入校验/大文件OOM/编码假设 + 5语言差异表 |
+| Type | [lessons-pattern-type.md](lessons-pattern-type.md) | 4 | 宽类型/any传染/null缩窄/enum穷举 |
 | Test | [lessons-pattern-test.md](lessons-pattern-test.md) | 4 | 水平切片/flaky/只测happy path/测试名无场景 + 5语言差异表 |
 | Perf | [lessons-pattern-perf.md](lessons-pattern-perf.md) | 4 | 不profile就优化/过早缓存/循环alloc/字符串拼接O(N²) + 4语言差异表 |
 | Null | [lessons-pattern-null.md](lessons-pattern-null.md) | 4 | 空值崩溃/不可能为空假设/falsy合并/可选链滥用 + 4语言差异表 + Go nil interface专题 + JS null vs undefined专题 |

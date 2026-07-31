@@ -32,22 +32,9 @@ user-invocable: true
 **例外（完整输出）**：Plan 阶段 / 用户提问后回答 / 安全警告 / 首次解释复杂概念。
 > 来源: Matt Pocock `caveman` skill，省 ~75% token
 
-## Workflow State Machine
+## Workflow（Phase 0→3）
 
-```
-Phase 0: 搜现成方案 ──→ 有 → 理解→适配→整合 → 跳过 Phase 2
-     │                    └─ 无 → Phase 1
-     ↓
-Phase 1: 三轴加载教训
-         ├─ 轴1 Domain: 匹配任务关键词 → 加载 domain 文件
-         ├─ 轴2 Language: 检测文件扩展名 → 加载 lang/lessons-<lang>.md
-         └─ 轴3 Pattern: 检测代码模式 → 加载 patterns/lessons-pattern-<pat>.md
-         → 输出避坑清单（交集，2-4 个文件 ~2K tokens）
-     ↓
-Phase 2: 执行（子命令见下）
-     ↓
-Phase 3: 反省 → 提炼教训 → 按三轴归档 → 合并/新增/休眠 → 更新优先级
-```
+`Phase 0 搜现成方案` → 有: 整合(跳 Phase 2) / 无: `Phase 1 三轴加载`(Domain×Language×Pattern → 避坑清单 2-4 文件 ~2K tokens) → `Phase 2 执行`(子命令) → `Phase 3 反省归档`(三轴 + 更新优先级)
 
 ## Subcommands
 
@@ -108,3 +95,4 @@ Phase 3: 反省 → 提炼教训 → 按三轴归档 → 合并/新增/休眠 �
 - [ ] SKILL.md ≤ 100 行，引用一层深，术语一致
 - [ ] 发布: 包管理器已检测 → 语言自适应策略 → grep 旧版本号零残留
 - [ ] Phase 3: 新教训按三轴归档 + 优先级已更新
+- [ ] **improve 自身修改 → GitHub 备份**: 本次改动过 skill 文件 → 已同步 `BFRKQSB7/claude-code-skills` 的 `improve/` 并 push

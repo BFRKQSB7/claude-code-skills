@@ -58,3 +58,74 @@ description: >
 - 高级功能很少使用 → 独立文件按需加载
 - 路由表保持纯索引：`lessons-learned.md` 只含路由条件，不含教训摘要
 - 每个子目录有 `INDEX.md`：1行描述 + 教训数 + 交叉索引
+
+---
+
+## Agent Brief 模板（来自 triage）
+
+> 来源: Matt Pocock `triage` — AFK agent 的权威规格说明
+
+- **耐久性 > 精确度**: 不引文件路径/行号（会过时），描述接口/类型/行为契约
+- **行为描述**: 描述 what（系统该做什么），不描述 how（怎么实现）
+- **完整验收标准**: 每个标准独立可验证
+- **明确范围边界**: 列出 out of scope
+
+```markdown
+## Agent Brief
+
+**Category:** bug / enhancement
+**Summary:** 一句话
+
+**Current behavior:**
+现状（bug = 错误行为，enhancement = 新功能基础）
+
+**Desired behavior:**
+目标行为。覆盖边界情况和错误条件。
+
+**Key interfaces:**
+- `TypeName` — 要改什么，为什么
+- `functionName()` 返回类型 — 当前 vs 目标
+- Config shape — 新增配置项
+
+**Acceptance criteria:**
+- [ ] 具体、可验证的标准 1
+- [ ] 具体、可验证的标准 2
+
+**Out of scope:**
+- 不在此 issue 范围内的相关事项
+```
+
+---
+
+## Session Handoff 模板（来自 handoff）
+
+> 来源: Matt Pocock `handoff`
+
+**何时用**: 长任务跨会话、需要换 agent 继续、或用户说 "总结一下给下次继续"
+
+```markdown
+# Handoff: <任务简述>
+
+## 当前状态
+- 完成了什么
+- 卡在哪里
+- 下一步是什么
+
+## 关键上下文
+- 相关文件路径
+- 已排除的方案
+- 已确认的前提
+
+## Suggested Skills
+- /skill-name — 为什么需要
+
+## 参考
+- PRD: path/to/prd.md
+- Issue: #42
+- ADR: docs/adr/0001-xxx.md
+```
+
+**规则**:
+- 不重复已存在 artifact 中的内容（PRD/ADR/Issue/commit），只引用路径
+- 脱敏：删除 API key、密码、PII
+- 存到 OS 临时目录，不放工作区
