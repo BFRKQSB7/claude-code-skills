@@ -4,6 +4,21 @@
 
 ---
 
+## ★ [2026-08-01] 修改 improve skill 后未同步 GitHub 备份 → 备份过期 (置信度: high, 命中: 1)
+
+**Rule**: 任何修改 improve skill 文件（SKILL.md / lessons / INDEX / 删文件）后，Phase 3 反省时把改动同步到 GitHub 备份 repo `BFRKQSB7/claude-code-skills` 的 `improve/` 并 push
+**Why**: 备份 repo 是 `~/.claude/skills/` 的 self-use 备份。不同步则多会话后备份严重过期（本会话发现备份仍含已删除的 `agent-brief.md` / `handoff.md` / `references/lessons-learned.md`）
+**Right**: 同步流程（备份 clone 在 `C:/Users/NYRO/claude-code-skills`，已设本地代理 7896）:
+```bash
+cd C:/Users/NYRO/claude-code-skills && git pull
+rsync -a --delete "C:/Users/NYRO/.claude/skills/improve/" improve/
+git add -A && git commit -m "sync: improve <改动摘要>" && git push
+```
+**检测**: 修改后 `git -C C:/Users/NYRO/claude-code-skills status --short improve/` 无输出 = 已同步
+**泛化**: 任何"自修改型"skill（会更新自身教训文件）都要内置备份步骤，否则知识库与备份分叉。
+
+---
+
 ## ★★★ [2026-06-16] 发布流程手动重复 → 遗漏步骤 (置信度: high, 命中: 3)
 
 > **→ 常加载** `[lessons-critical.md](lessons-critical.md)` 含完整 Rule / Wrong / Right / 再次记录
