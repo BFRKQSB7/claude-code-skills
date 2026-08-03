@@ -4,6 +4,15 @@
 
 ---
 
+## ★★ [2026-08-03] statusline 插件不显示 → 先查 statusLine 键是否被外部工具改写 (置信度: high, 命中: 1)
+
+**场景**: balance-hud v2.1.0（声称"与 API 无关，任意 API 均正常显示"）在第三方 API（ccswitch 代理, `ANTHROPIC_BASE_URL=127.0.0.1:7897`）下 HUD 完全不显示
+**根因**: `~/.claude/settings.json` 被代理切换工具 ccswitch 重写，`statusLine` 键被丢弃 → Claude Code 从不调用 HUD 进程。引擎本身对第三方 API payload 渲染完全正常（用模拟 stdin 验证）。装的就是真 v2.1.0（dist 与 release zip 逐字节一致），v2.1 的"API 无关"改的是渲染代码，与"没被调用"无关
+**修复**: ① 写 `statusline.mjs` 包装器（设 COLUMNS 宽度 + 直连插件路径，不依赖 cache 结构）② statusLine 加回 `~/.claude/settings.json` ③ 同时写入 `~/.claude/settings.local.json`（优先级更高且 ccswitch 不碰此文件）→ 抗重写
+**泛化**: 外部工具重写配置文件时丢未知键（只保自己的 env/model 模板）。配置类插件失效，第一诊断是"进程是否被调用"，不是改渲染代码。隔离方法：`node dist/index.js < test_payload.json` 直接喂模拟 stdin → 输出正常 = 没被调用（查 wiring）；输出空/报错 = 渲染 bug。statusLine 是顶层键，settings.local.json 优先级高于 settings.json
+**关键词**: `statusLine` `settings.json` `settings.local.json` `ccswitch` `statusline` `HUD` `重写` `覆盖` `配置文件`
+
+---
 ## ★★ [2026-06-16] 初始化时异常采样 → 基准线错误 (置信度: high, 命中: 2)
 
 **Rule**: 传感器/API 首次采样可能异常，不要第一点就固化
