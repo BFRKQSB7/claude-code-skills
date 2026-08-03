@@ -4,6 +4,25 @@
 
 ---
 
+## ★★ [2026-08-03] 残留后台进程跨会话污染状态 → 跨提供商残留余额 (置信度: high, 命中: 1)
+
+**场景**: 用户 DeepSeek 会话用完后关窗口,切到第三方中转开新会话,HUD 底部仍显示 DeepSeek 官方余额
+**根因**: SessionStart 钩子启动的余额轮询 daemon 在 Windows 上**不随 Claude Code 关闭而死**(async 钩子子进程脱离)。残留 daemon 继续用旧 DeepSeek key 每 15s 轮询并写 `balance_usage.json`,快照永远新鲜 → 新会话 HUD 读它 → 显示旧提供商余额。PID 抢占锁只在"新 daemon 启动"时杀旧 daemon;新会话钩子没触发(切换时插件注册被 cc-switch 改)就没人杀
+**修复**: 三层:① 后台 daemon 加**父进程存活检测**(`process.ppid` 死则自终止,~一个轮询周期内退出)② HUD 读余额快照前验证**当前环境是否真是该提供商**(`isDeepSeekEnv`: baseUrl 含 deepseek 或显式 DEEPSEEK_API_KEY,否则忽略快照)③ 余额 API fetch 加 8s 超时防悬空请求累积
+**泛化**: 外部工具切换只影响新进程,残留后台进程固化旧 env 会继续旧行为 → 先杀进程再改逻辑。后台进程必须绑定父进程生命周期(孤儿自终止),不能依赖"下次启动的锁"。状态文件被不可控进程持续写入时,读取方必须验证当前环境而不是信任文件
+**关键词**: `残留进程` `孤儿进程` `父进程存活` `process.ppid` `跨提供商` `余额` `状态污染` `生命周期`
+
+---
+## ★ [2026-08-03] 中转下模型显示角色名而非真实模型 → env 重映射解析 (置信度: high, 命中: 1)
+
+**场景**: 第三方中转(OpenCode Go, OpenAI 格式)下,HUD 模型只显示角色 `claude-sonnet-4-6`,用户要显示真实模型 `deepseek-v4-flash`
+**根因**: 中转把 Claude 角色重映射成别的模型,但 statusline 的 stdin 只有角色 id(display_name 为空或=角色)。真实模型名在 env: `ANTHROPIC_DEFAULT_<ROLE>_MODEL_NAME`
+**修复**: `getModelName` 优先解析 env 重映射 — 模型 id 是 `claude-(opus|sonnet|haiku|fable)-` 时,查 `ANTHROPIC_DEFAULT_<ROLE>_MODEL_NAME`(回退 `_MODEL`),显示真实模型;官方 API 无该 env → 不受影响走 display_name
+**泛化**: 第三方中转/代理的"显示名"常与真实模型分离,真实信息藏在 env/配置重映射里。显示层读取 stdin 不够,要结合 env 解析。Claude Code 的 `ANTHROPIC_DEFAULT_<ROLE>_MODEL(_NAME)` 就是角色→真实模型权威映射
+**关键词**: `模型角色` `真实模型` `ANTHROPIC_DEFAULT_SONNET_MODEL_NAME` `env 重映射` `中转` `getModelName`
+
+---
+
 ## ★★ [2026-08-03] statusline 插件不显示 → 先查 statusLine 键是否被外部工具改写 (置信度: high, 命中: 1)
 
 **场景**: balance-hud v2.1.0（声称"与 API 无关，任意 API 均正常显示"）在第三方 API（ccswitch 代理, `ANTHROPIC_BASE_URL=127.0.0.1:7897`）下 HUD 完全不显示
