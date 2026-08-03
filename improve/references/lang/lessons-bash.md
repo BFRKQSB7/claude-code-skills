@@ -124,6 +124,23 @@ $text = $text -replace "`n", "`r`n"
 **Rule**: `[ "$var" = "value" ]` 变量永远引起来。空变量不引 → `[ = "value" ]` 语法错误
 **Right**: 用 `[[ ]]`（bash 内置，不分裂变量）替代 `[ ]`（POSIX test）
 
+### ★★ Windows 上 `zip`/`Compress-Archive` 打出的 zip 用反斜杠分隔符 → 跨平台解压损坏 (置信度: high, 命中: 1)
+
+**Rule**: 发布 zip 用 `python zipfile`（强制 `/` 正斜杠），不要用 Git Bash 的 `zip` 或 PowerShell `Compress-Archive`
+**Wrong**: `zip -qr balance-hud-v2.1.1.zip balance-hud` (Git Bash/Windows) → 条目名 `balance-hud\config.json`（反斜杠）→ macOS/Linux unzip 按反斜杠当普通字符 → 文件结构损坏，安装脚本找不到 `dist/index.js`
+**Right**: 
+```bash
+python -c "
+import zipfile, os
+zf=zipfile.ZipFile('x.zip','w',zipfile.ZIP_DEFLATED)
+for dp,dn,fn in os.walk('balance-hud'):
+    for f in fn:
+        full=os.path.join(dp,f); zf.write(full, full.replace(os.sep,'/'))
+zf.close()"
+```
+**Why**: Git Bash 的 `zip` 在 Windows 上把路径分隔符写成 `\`；Python zipfile 的 `arcname` 强制正斜杠，任意平台都能正确解压。
+**检测**: 发布前 `unzip -l x.zip | head` 看条目名是否 `/` 分隔。**再次**: 2026-08-03 v2.1.1 发布时 zip 用反斜杠,跨平台安装会坏,改用 python 重建
+
 ---
 
 ## #loop — 循环陷阱
