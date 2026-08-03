@@ -13,6 +13,15 @@
 **关键词**: `statusLine` `settings.json` `settings.local.json` `ccswitch` `statusline` `HUD` `重写` `覆盖` `配置文件`
 
 ---
+## ★★ [2026-08-03] ANTHROPIC_AUTH_TOKEN 被当 DeepSeek 余额 key → 代理会话直连官网余额接口 (置信度: high, 命中: 1)
+
+**场景**: 第三方 API（ccswitch 代理）会话，balance-hud 的 auto_refresh daemon 每 15s 直连 `api.deepseek.com/user/balance`，用户疑惑"第三方 API 为什么调官网余额查询"
+**根因**: `getKeys()` = `DEEPSEEK_API_KEY || ANTHROPIC_AUTH_TOKEN`，只看变量非空，不判断 baseUrl 是否真 DeepSeek。代理 token（`PROXY_MANAGED`）被当 DeepSeek key 发到官网。且已运行的 daemon 固化旧 env（切代理前是直连 DeepSeek 的真 key），切换后残留进程继续拿旧 key 直连官网
+**修复**: ① 杀掉残留 daemon（PID 抢占锁只在下次 SessionStart 触发，当前进程不受影响）② `getKeys()` 改为：`DEEPSEEK_API_KEY` 显式优先；`ANTHROPIC_AUTH_TOKEN` 仅当 `ANTHROPIC_BASE_URL` 含 `deepseek` 才当 key ③ 写空快照清掉残留余额行
+**泛化**: 凭据回退要验证目标服务身份（baseUrl/环境），不能只看变量非空。外部工具切配置只影响新进程，残留后台进程固化旧 env 会继续旧行为 → 先杀进程再改逻辑。诊断"谁在调某 API"：grep 代码里的 fetch/axios URL + 查残留进程 startTime
+**关键词**: `DEEPSEEK_API_KEY` `ANTHROPIC_AUTH_TOKEN` `ANTHROPIC_BASE_URL` `余额` `直连` `凭据回退` `代理` `残留进程` `getKeys`
+
+---
 ## ★★ [2026-06-16] 初始化时异常采样 → 基准线错误 (置信度: high, 命中: 2)
 
 **Rule**: 传感器/API 首次采样可能异常，不要第一点就固化
