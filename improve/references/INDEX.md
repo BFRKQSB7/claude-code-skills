@@ -9,7 +9,7 @@
 |--------|------|--------|--------|
 | Process | [lessons-process.md](lessons-process.md) | 4 | 后台进程/锁/启动竞态/daemon hook async |
 | Cleanup | [lessons-cleanup.md](lessons-cleanup.md) | 2 (7子模式) | 变更后全局 grep 防引用断裂 / 衍生项目旧仓库引用 |
-| State | [lessons-state.md](lessons-state.md) | 6 | API 采样基准线/跨平台 CLI/实时性/statusLine 被重写/凭据回退 |
+| State | [lessons-state.md](lessons-state.md) | 8 | API 采样/跨平台 CLI/实时性/statusLine 被重写/凭据回退/残留进程污染/模型 env 重映射 |
 | Skill | [lessons-skill.md](lessons-skill.md) | 21 | 发布流程/教训审查/SKILL.md 架构/术语/命名/衍生项目文档/多语言 README |
 | Debug | [lessons-debug.md](lessons-debug.md) | 8 | 反馈循环优先/调试日志标记/多假设锚定/代理端口验活/行尾差异/实测当前行为 |
 | Security | [lessons-security.md](lessons-security.md) | 8 | 注入/凭证泄露/供应链/反序列化/CORS/加密 |
@@ -20,7 +20,7 @@
 ```
 任务含 "daemon/lock/pid/启动/后台/守护/竞态" → lessons-process.md (4条，~50行)
 任务含 "rename/delete/version/release/重命名/版本/发布/打包" → lessons-cleanup.md (1条+6子模式，~20行)
-任务含 "api/monitoring/cli/cross-platform/windows/path/采样/跨平台" → lessons-state.md (6条，~70行)
+任务含 "api/monitoring/cli/cross-platform/windows/path/采样/跨平台" → lessons-state.md (8条，~95行)
 任务含 "skill/plugin/design/naming/description/readme/i18n/multi-language/多语言/翻译/技能/反省/学习" → lessons-skill.md (19条，~180行)
 任务含 "debug/diagnose/bug/fix/log/调试/诊断/复现/排查" → lessons-debug.md (8条，~90行)
 任务含 "security/auth/token/password/encrypt/injection/安全/认证/加密" → lessons-security.md (8条，~80行)
