@@ -11,7 +11,7 @@
 | JavaScript/TS | [lessons-javascript.md](lessons-javascript.md) | 18 | Promise不await / forEach+async / var闭包 / any传染 / fetch缺超时 / innerHTML XSS / prototype pollution / SSR hydration / ANSI字符串长度 |
 | Go | [lessons-go.md](lessons-go.md) | 11 | goroutine泄漏 / channel未关闭 / defer在循环 / nil interface / time.After泄漏 / context断链 / WaitGroup竞态 / range取地址 |
 | Rust | [lessons-rust.md](lessons-rust.md) | 4 | unwrap生产panic / 生命周期传染 / clone滥用 / tokio drop handle |
-| Bash | [lessons-bash.md](lessons-bash.md) | 13 | pipefail未开 / glob无匹配 / 变量不引号 / subshell变量丢失 / set -u / UTF-8 BOM → cmd崩溃 / LF换行 / 引号分词 |
+| Bash | [lessons-bash.md](lessons-bash.md) | 14 | pipefail未开 / glob无匹配 / 变量不引号 / subshell变量丢失 / set -u / UTF-8 BOM → cmd崩溃 / LF换行 / 引号分词 / Windows zip反斜杠 |
 
 ## 语言检测优先级
 
