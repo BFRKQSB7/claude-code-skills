@@ -23,6 +23,7 @@
 
 ### 发布（Phase 2）
 - [ ] **包管理器已检测**: 确认了 `package.json` / `pyproject.toml` / `Cargo.toml` / `go.mod` / `.claude-plugin/`？
+- [ ] **提交身份正确**: `git log -1 --format='%an <%ae>'` — 提交邮箱必须是本人账号（`226671264+BFRKQSB7@users.noreply.github.com`），不是 `nyro@...` 等错误身份（★ 2026-08-05 教训，3 个仓库贡献被归属陌生人）
 - [ ] **门禁通过**: grep 旧版本号零残留 + git push 后 GitHub 页面版本号正确
 - [ ] **模板统一**: RELEASE 和 README 用对应语言模板
 

@@ -28,6 +28,11 @@ detect_lang() {
 
 ## 发布命令（语言自适应）
 
+> ⚠️ **提交身份检查（★ 2026-08-05 教训，balance-hud / kakuyomu-scraper / claude-code-skills 踩坑）**:
+> commit 前先确认身份 `git config user.email` = `226671264+BFRKQSB7@users.noreply.github.com`（本人账号，勿用 `nyro@...` 等）。
+> commit 后复核 `git log -1 --format='%an <%ae>'`。提交邮箱会被 GitHub 关联到账号 → 错配 = 整个仓库贡献归属陌生人，
+> 只能 `git filter-branch --env-filter` 重写历史 + `git push --force` 修正。
+
 ### Python 项目
 ```bash
 # 版本号同步（pyproject.toml）
