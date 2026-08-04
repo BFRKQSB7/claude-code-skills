@@ -106,3 +106,14 @@
 **Rule**: 任何 MCP 工具调用（`mcp__*` / `WebFetch` / `WebSearch`）前 → **必须先读** [lessons-mcp.md](lessons-mcp.md)。Chrome 连接失败一次 = 浪费 5-10 分钟 + 打断用户操作。
 **Why**: Chrome DevTools MCP 连接需要 4 步手工操作（伪造 DevToolsActivePort），不读教训的代价是平均 6 次重试才能连上。WebFetch 拦截 / snapshot 溢出都有一条正确的绕过路径 → 不查 = 反复撞墙。
 **防御**: Phase 1 检测到 MCP 工具关键词（`mcp__` `WebFetch` `WebSearch` `take_snapshot` `take_screenshot` `navigate_page` `evaluate_script` `new_page` `select_page` `click` `fill` `list_pages` `performance` `lighthouse` `upload_file` `browser` `chrome` `devtools` `huggingface` `搜索` `浏览器` `截图` `网页` `访问` `下载` `渲染`）→ 门禁加载 lessons-mcp.md
+
+---
+
+## ★★★ 提交身份错配 → 贡献归属陌生人 `rotatable` (since: 2026-08-05, last_hit: 2026-08-05)
+
+**Rule**: 任何 git commit 前，必须确认提交身份正确 — commit 前 `git config user.email`、commit 后 `git log -1 --format='%an <%ae>'` 复核。发布流程 Phase 2 已加「提交身份」门禁。
+**Why**: git 提交邮箱会被 GitHub 关联到对应账号。身份错配 = 整个仓库的贡献被归属给陌生人（不是协作者，只是贡献显示错人），且协作者列表不会提示 — 只能靠 `git filter-branch --env-filter` 重写历史 + `git push --force` 修正，属于破坏性操作。
+**Wrong**: 全局 git user.email 缺失/从旧项目复制 config；提交后才发现贡献者列表出现陌生人头像
+**Right**: commit 前 `git config user.email` 校验 = `226671264+BFRKQSB7@users.noreply.github.com`；push 后 `gh api repos/<owner>/<repo>/contributors` 确认无陌生账号
+**检测**: `git log --all --format='%an <%ae>' | sort -u` 扫一遍所有提交身份，确认每个邮箱都归属本人账号
+**再次**: 2026-08-05 — balance-hud(11) + kakuyomu-scraper(3) + claude-code-skills(6) 提交全部误用 `nyro@users.noreply.github.com`，贡献归属陌生账号 nyro(显示名 Florian)，已重写历史修正
