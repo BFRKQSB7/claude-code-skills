@@ -116,4 +116,6 @@
 **Wrong**: 全局 git user.email 缺失/从旧项目复制 config；提交后才发现贡献者列表出现陌生人头像
 **Right**: commit 前 `git config user.email` 校验 = `226671264+BFRKQSB7@users.noreply.github.com`；push 后 `gh api repos/<owner>/<repo>/contributors` 确认无陌生账号
 **检测**: `git log --all --format='%an <%ae>' | sort -u` 扫一遍所有提交身份，确认每个邮箱都归属本人账号
+**防御**: 校验必须是**断言**（打印后逐字比对，`printf` 出来不等于通过）。`git config user.email` 可能被**仓库级 `--local` 配置覆盖**——先 `git config --local --get user.email`，再 `git config user.email`，两个都须等于 `226671264+BFRKQSB7@users.noreply.github.com`。备份/同步仓库的提交同样受此门禁约束。
 **再次**: 2026-08-05 — balance-hud(11) + kakuyomu-scraper(3) + claude-code-skills(6) 提交全部误用 `nyro@users.noreply.github.com`，贡献归属陌生账号 nyro(显示名 Florian)，已重写历史修正
+**再次**: 2026-08-05 — claude-code-skills 本地仓库残留 `--local user.email=nyro@users.noreply.github.com` 覆盖；sync 提交打印出错值却未断言拦截即提交+推送，已 reset 到正确基线重推、错误身份提交从远程清除

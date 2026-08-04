@@ -10,7 +10,7 @@
 | Process | [lessons-process.md](lessons-process.md) | 4 | 后台进程/锁/启动竞态/daemon hook async |
 | Cleanup | [lessons-cleanup.md](lessons-cleanup.md) | 2 (7子模式) | 变更后全局 grep 防引用断裂 / 衍生项目旧仓库引用 |
 | State | [lessons-state.md](lessons-state.md) | 8 | API 采样/跨平台 CLI/实时性/statusLine 被重写/凭据回退/残留进程污染/模型 env 重映射 |
-| Skill | [lessons-skill.md](lessons-skill.md) | 24 | 发布流程/教训审查/SKILL.md 架构/术语/命名/衍生项目文档/多语言 README/代理指令禁弹窗/断言验运行时/迭代基线优化 |
+| Skill | [lessons-skill.md](lessons-skill.md) | 25 | 发布流程/教训审查/SKILL.md 架构/术语/命名/衍生项目文档/多语言 README/代理指令禁弹窗/断言验运行时/迭代基线优化/手动插件注册 |
 | Debug | [lessons-debug.md](lessons-debug.md) | 8 | 反馈循环优先/调试日志标记/多假设锚定/代理端口验活/行尾差异/实测当前行为 |
 | Security | [lessons-security.md](lessons-security.md) | 8 | 注入/凭证泄露/供应链/反序列化/CORS/加密 |
 | **MCP** | **[lessons-mcp.md](lessons-mcp.md)** | **6** | **Chrome 连接/WebFetch 拦截/WebSearch 技巧/截图溢出/浏览器 vs WebFetch** |
