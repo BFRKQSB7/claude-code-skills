@@ -153,3 +153,23 @@
 **Why**: `\x1b[94m` 占 7 个 `string.length` 但终端显示宽度为 0。富文本同理（`<b>bold</b>` 6 个 raw chars 但 visible 只有 4）。`MAX_LENGTH=50` 对 117-char ANSI 字符串在 `|` 处截断 → 用户只看到 `余额 ¥16 | ...` 缺失消费信息。
 **Where**: 2026-07-05 balance-hud v2.0.0 `sanitizeBalanceLabel()` — `MAX_BALANCE_LABEL_LENGTH=50` 但 balance_label 含 ~70 chars ANSI 码 → 消费信息被 `...` 替换，用户 3 天未定位。
 **Fix**: `MAX_BALANCE_LABEL_LENGTH` 50 → 512（临时）；根本修复应为 `stripAnsi()` 后按 visible length 截断。
+
+
+---
+
+## #dom — DOM 运行时陷阱
+
+### ★★ HTML/JS 模板依赖运行时 JS 的功能会静默失效 (置信度: high, 命中: 1)
+
+**Rule**: 生成含运行时 JS 的 HTML 页面时，交互功能（高亮/目录/复制/Tab）**必须无头渲染验证**，不能只查源码里有没有类名。JS 一个静默报错 = 后续所有功能全部失效且无报错。
+**Wrong**:
+- 用 `element.innerText` 读代码内容 → `innerText` 依赖布局，`--dump-dom` 等未渲染场景返回空 → 高亮零输出
+- 用 `querySelector("#" + a.hash.slice(1))` 反查中文 id 标题 → `a.hash` 对非 ASCII 返回 percent-encode（`#示例`→`#%E7%A4%BA%E4%BE%8B`）→ `querySelector` 抛 `SyntaxError` → 目录 JS 中断，**它后面的高亮/复制/Tab/过滤全部不执行**
+- 校验脚本 `grep "tok-"` 匹配到的是 CSS/JS 里的类名定义，不是真实渲染的 span → 假阳性通过
+**Right**:
+- 读元素文本用 `textContent`（布局无关）；目录滚动高亮直接保存元素引用，不用 id 反查
+- 校验：headless Chrome `--dump-dom` 渲染后 `grep 'class="tok-'` 数真实 span 数量
+- `position:sticky` 在大页面会无规律失效（fixed 却正常）→ 用 scroll 监听转 `fixed` 兜底
+**Why**: 一个 `querySelector` 的 SyntaxError 让整页语法高亮+复制+Tabs 全灭，4 轮评测用户连续两轮反馈"无语法高亮"才定位到根因——JS 静默失败没有错误提示，只能靠渲染验证兜底。
+**Where**: 2026-08 html-guide skill 骨架 — `it.a.hash` 中文 id percent-encode 导致 buildToc 抛错，高亮/复制/Tab 全部未跑（评测迭代 2→3 修复）。
+**Fix**: `textContent` 替代 `innerText`；目录存元素引用替代 querySelector 反查；SKILL.md 内置 headless 验证步骤。
