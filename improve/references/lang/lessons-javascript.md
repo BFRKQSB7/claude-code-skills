@@ -145,6 +145,13 @@
 
 ## #string — 字符串处理陷阱
 
+### ★ [2026-08-05] Edit old_string 含 \uXXXX 字面量 → 不匹配 (置信度: high, 命中: 1)
+
+**Rule**: 编辑含 `\uXXXX` 转义**字面量**的 JS（编译产物里 `'│'` 就是字面 backslash+u2502，不是实际字符）时，Edit 参数按 JSON 解析会把 `│` 解码成实际字符 `│` → old_string 不匹配（工具自动尝试 `\uXXXX`↔字符两种形式仍失败）。
+**Wrong**: `old_string: "return parts.join(' │ ');"` 想匹配文件里的 `return parts.join(' │ ');` → not found。
+**Right**: old_string 写文件实际内容 `\\u2502`（JSON 层转义 → 匹配到字面 backslash-u-2502）；new_string 可用实际字符。
+**Why**: 编译后 dist JS 常用 `\uXXXX` 表示特殊字符（如 `│`、分隔符）；Edit 参数走 JSON 序列化，`\u` 被当转义。遇到不匹配先看目标行是否含 `\u` 字面量。
+
 ### ★★★ 含 ANSI/标记的字符串长度检查 → 截断错误 (置信度: high, 命中: 1)
 
 **Rule**: 含 ANSI 转义序列/HTML 标签/Markdown 标记的字符串，长度检查和截断必须在**剥离格式代码后的 visible text** 上执行，不能用 `string.length`

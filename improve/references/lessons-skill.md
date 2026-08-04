@@ -4,6 +4,20 @@
 
 ---
 
+## ★ [2026-08-05] 手动解压插件未注册 → /plugin 斜杠命令全部不可用 (置信度: high, 命中: 1)
+
+**Rule**: 手动解压到 `~/.claude/plugins/<name>/` 的插件，只配置 `statusLine` 只能显示 HUD，**斜杠命令（`/plugin:<cmd>`）不会出现**——命令只有把插件注册进插件系统才生效。`installed_plugins.json` 为空 = 幽灵安装。
+**Wrong**: `statusLine.command` 直接指向 `node ~/.claude/plugins/balance-hud/dist/index.js`，HUD 正常但 `/balance-hud:configure` 等"用不了"。
+**Right**: 注册本地插件（路径**必须正斜杠**，反斜杠会被 CLI 当 marketplace 名解析 → 报 `Marketplace "...not found"`）:
+```
+/plugin marketplace add C:/Users/NYRO/.claude/plugins/balance-hud
+/plugin install balance-hud
+```
+然后完全重启 Claude Code。安装会复制到 `~/.claude/plugins/cache/` 并从副本注册命令；**不**动 `statusLine`。之后**不要**再跑 `/balance-hud:setup`（会重写 statusLine.command）。判断已注册：`installed_plugins.json` 含该插件条目。
+**Why**: `/plugin install <目录路径>` 不接受路径——参数被当 marketplace 名解析。本地插件必须先以 marketplace 形式 `add` 再 `install`。
+
+---
+
 ## ★ [2026-08-01] 修改 improve skill 后未同步 GitHub 备份 → 备份过期 (置信度: high, 命中: 1)
 
 **Rule**: 任何修改 improve skill 文件（SKILL.md / lessons / INDEX / 删文件）后，Phase 3 反省时把改动同步到 GitHub 备份 repo `BFRKQSB7/claude-code-skills` 的 `improve/` 并 push
