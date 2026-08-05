@@ -321,3 +321,16 @@ docs/
 **Right**: 追加组件后先 `grep "组件类名" 页面.html`——标记和 CSS 两处都要有；CSS 缺失就把当前骨架的 `<style>` 整体替换进页面（正文 class 不变，`<script>` 一致则不动）。交付前无头渲染验证计算宽度（`getBoundingClientRect().width` 与 `--v` 成比例）。
 **Why**: 单文件页面的样式是嵌入快照，与 skill 骨架独立演进。追加组件时人眼盯标记、漏看样式表是否含对应 CSS → 组件静默失效，纯文本浏览根本看不出来。
 **检测**: 组件类名（如 `.bc-track` / `.donut`）在页面里应同时出现在标记与 CSS 两处。
+
+---
+
+### ★ [2026-08-05] skill 发布仓库 README 独立维护 → 改 skill 不同步 README (置信度: high, 命中: 1)
+
+**Rule**: skill 发布仓库的 `README.md` **只在 repo 里维护**（不在 `~/.claude/skills/<skill>/` 加载目录里）。发布流程「copy 加载目录 → repo」**不会带 README**——每次改 skill 后要单独检查/同步 README，否则 README 停在旧描述。
+**Wrong**: v2.0.4 把代理端口解耦到 user-config.md，只改了 search-guide.md / SKILL.md；README 目录结构注释仍写 `curl -x 127.0.0.1:7896`。用户看到 GitHub README 还有 7896 才暴露。
+**Right**:
+1. 发布 skill 时，克隆仓库后先 `grep -rn "旧端口/旧功能名" README.md` 检查 README 是否需同步
+2. README 最容易过期的三处：**功能表 / 目录结构 / 安装说明**
+3. 判断 README 是否在加载目录：`ls ~/.claude/skills/<skill>/README.md` 不存在 = 仓库独有
+**Why**: 发布源（加载目录）与仓库内容分叉，README 只在仓库侧、且发布流程不覆盖它 → 单点过期。
+**检测**: 发布后 `grep "旧值" README.md` → 0 残留；README 不在加载目录 = 记得单独看 repo 侧。
