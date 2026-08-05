@@ -132,3 +132,18 @@ printf "9222\n/devtools/browser/<current-uuid>\n" > "%LOCALAPPDATA%\Google\Chrom
 需要表格/结构化数据 → evaluate_script + 自定义 JS
 需要视觉确认        → take_screenshot
 ```
+
+---
+
+## ★★ [2026-08-05] 横评/榜单页只做主题搜索 → 漏掉厂商新发布 (置信度: high, 命中: 1)
+
+**Rule**: 生成「最新/横评/对比」类页面时，信息收集必须**先枚举厂商清单、再逐家扫官方渠道按时间倒序**，不能只做主题搜索。主题搜索会漏新发布（LLM 知识截止 + 单一搜索路径 = 时间窗口盲区）。
+**Wrong**: 生成「8 月最新大模型横评」（8-05）只按榜单/主题搜，漏掉 DeepSeek V4 Flash 0731 正式版（8-01 发布，deepseek-ai 组织页按更新时间排序第一行）。数据实际只到 7.27，用户批评「数据收集太差」。
+**Right**:
+1. 厂商清单枚举（OpenAI/Anthropic/DeepMind/Meta/DeepSeek/Kimi/GLM/Qwen/xAI/Mistral/字节/MiniMax），逐家覆盖
+2. 每家查 HF 组织页按 lastModified 倒序：`api/models?author=<厂商>&sort=lastModified&direction=-1`——新模型必在顶部，JSON API 无 JS 渲染问题
+3. 日期窗口 `[知识截止, 今天]` 显式覆盖，窗口内每家逐条交代或标注「无更新」
+4. JS 渲染新闻页（Docusaurus 等）别抓 HTML，走 HF API 或浏览器 skill
+**Why**: 这类页面的命门是「截至今天」的**完整性**。枚举 + 时间倒序 = 系统性覆盖；主题搜索 = 随机命中。用户对时效残缺容忍度极低。
+**检测**: 生成横评页后自查——窗口期内每家厂商是否有新发布/更新被遗漏？
+**泛化**: 任何「截至某日」的汇总/盘点（新闻综述、竞品分析、版本更新）都用同一方法。方法论已固化进 html-guide search-guide.md §2.5。
