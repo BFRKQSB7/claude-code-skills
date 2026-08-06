@@ -199,13 +199,24 @@ git add -A && git commit -m "sync: improve <改动摘要>" && git push
 **Why**: GitHub Release 不是 CI/CD pipeline。每次改 zip 内容需要删旧 asset + 重新上传 + 更新 release notes → 3 步每步可能网络失败。批量发版 = 减少失败点。
 **防御**: 发布前 checklist 增加"所有文本修改已完成？"条目。未完成 → 不进入打包阶段。
 
-## ★ [2026-08-05] 发布 skill 用错来源副本 → 把旧版当新版发布 (置信度: high, 命中: 1)
+## ★ [2026-08-06] 发布 skill 用错来源副本 → 把旧版当新版发布 (置信度: high, 命中: 1)
 
 **Rule**: 发布 skill 前，先 `diff -rq <实际加载的 skill 目录> <发布仓库>` 核对两者是否分叉，**以当前加载的目录为准**，不要默认拿桌面/历史副本当发布源。
 **Wrong**: `~/.claude/skills/html-guide`（加载源，含全部新改动）与桌面 `html-guide-skill` 仓库（v1.0 旧副本）各自独立。若直接基于旧副本改发布，会把旧版内容推上去，用户的"新改动"丢失。
 **Right**: 发布前 diff 两份 → 明确以加载目录为源 → 把过时副本删掉或标记 deprecated，避免双源长期分叉。
 **Why**: skill 安装目录与发布仓库很容易分叉（本会话桌面副本停留在 v1.0，加载目录已是 v2.0）。用错源 = 线上 SKILL.md/README 落后于实际功能。
 **检测**: 发布前 `diff -rq` 源目录与 repo，有差异先确认改动方向再发布。
+
+---
+
+## ★ [2026-08-06] 插件发布 zip 用 `git archive` 构建 → 免手动打包错误 (置信度: high, 命中: 1)
+
+**Rule**: 发布 Claude Code 插件/skill 的 zip 用 `git archive --format=zip --prefix=balance-hud/ -o out.zip HEAD`，禁止手动挑文件打包。
+**Wrong**: 手动 zip（拖文件/`zip -r` 挑目录）→ 可能混入运行时残留（`balance_usage.json`/`session_state.json`/`config-cache/`/`.bak`）或漏文件，每次发布结构不一致。
+**Right**: `git archive` 只含 git 跟踪文件，天然排除运行时垃圾与 `.git`。打包后两道门禁：① `diff <(git ls-files | sort) <(unzip -l zip | 文件清单 | sort)` 零差异（注意过滤目录条目与 header 行）② grep zip 内 `balance_usage|session_state|config-cache|.bak` 零命中。
+**Why**: v2.2.1 手动 zip 236 文件，v2.2.2 用 git archive 237 文件——结构由 git 保证可复现，发布只关注"内容对不对"而非"漏没漏"。
+**检测**: 发布 zip 后 `unzip -l` 对照 `git ls-files` 与运行时文件黑名单。
+
 
 ---
 

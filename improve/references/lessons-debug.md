@@ -65,6 +65,16 @@
 
 ---
 
+## ★ [2026-08-06] 模拟 stdin-payload 子进程用 spawnSync({input})，不用 shell 管道 (置信度: high, 命中: 1)
+
+**Rule**: 模拟"从 stdin 读 JSON payload"的 CLI 子进程（如 Claude Code statusline），用 `spawnSync(proc, [script], { input: payload })` 交付 payload，不要 `printf payload | node script`。
+**Wrong**: `printf '{json}' | node dist/index.js` → `readStdin()` 判为无 stdin → 走"正在初始化..."分支输出误导信息，让人误以为渲染失败，白查 5-10 分钟。
+**Right**: 参照 `scripts/hud_debug.mjs` 的 `simulateRender()` — `spawnSync(process.execPath, [dist/index.js], { input: payload, encoding: 'utf8', env, timeout })`。渲染前先确认 stdout 含真实 ANSI 码（`grep -c $'\x1b\[97m' raw`），不要先经 `cat -v` 再 grep（`\x1b` 会被转成 `^[` 永远匹配不到）。
+**Why**: 子进程对 stdin 的 EOF/读取方式敏感；spawnSync `input` 由父进程直接写 fd，shell 管道经转发行为不同。误判输出会浪费验证时间。
+**检测**: 模拟渲染输出 `正在初始化...`/`Initializing...` = 走错分支，改用 spawnSync input；`cat -v` 后 grep 原始 ANSI 码为 0 = 先别信，直接 grep raw 文件。
+
+---
+
 ## ★ [2026-08-01] 跨克隆/zip 比较"全部文件不同" → 先查行尾 (置信度: high, 命中: 1)
 
 **场景**: 比较 Windows 上 zip 解压的插件与 git clone 的同一项目，`diff -rq` 与逐文件 diff 均显示"所有文件都不同"，实则内容一致
