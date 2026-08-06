@@ -199,7 +199,7 @@ git add -A && git commit -m "sync: improve <改动摘要>" && git push
 **Why**: GitHub Release 不是 CI/CD pipeline。每次改 zip 内容需要删旧 asset + 重新上传 + 更新 release notes → 3 步每步可能网络失败。批量发版 = 减少失败点。
 **防御**: 发布前 checklist 增加"所有文本修改已完成？"条目。未完成 → 不进入打包阶段。
 
-## ★ [2026-08-06] 发布 skill 用错来源副本 → 把旧版当新版发布 (置信度: high, 命中: 1)
+## ★★ [2026-08-06] 发布 skill 用错来源副本 → 把旧版当新版发布 (置信度: high, 命中: 2)
 
 **Rule**: 发布 skill 前，先 `diff -rq <实际加载的 skill 目录> <发布仓库>` 核对两者是否分叉，**以当前加载的目录为准**，不要默认拿桌面/历史副本当发布源。
 **Wrong**: `~/.claude/skills/html-guide`（加载源，含全部新改动）与桌面 `html-guide-skill` 仓库（v1.0 旧副本）各自独立。若直接基于旧副本改发布，会把旧版内容推上去，用户的"新改动"丢失。
@@ -335,7 +335,7 @@ docs/
 
 ---
 
-### ★ [2026-08-05] skill 发布仓库 README 独立维护 → 改 skill 不同步 README (置信度: high, 命中: 1)
+### ★★ [2026-08-05] skill 发布仓库 README 独立维护 → 改 skill 不同步 README (置信度: high, 命中: 2)
 
 **Rule**: skill 发布仓库的 `README.md` **只在 repo 里维护**（不在 `~/.claude/skills/<skill>/` 加载目录里）。发布流程「copy 加载目录 → repo」**不会带 README**——每次改 skill 后要单独检查/同步 README，否则 README 停在旧描述。
 **Wrong**: v2.0.4 把代理端口解耦到 user-config.md，只改了 search-guide.md / SKILL.md；README 目录结构注释仍写 `curl -x 127.0.0.1:7896`。用户看到 GitHub README 还有 7896 才暴露。
