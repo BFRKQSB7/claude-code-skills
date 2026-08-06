@@ -4,7 +4,29 @@
 
 ---
 
+## ★★★ Chrome DevTools MCP 连接：自己起专用 Chrome + `--browserUrl`，别伪造 DevToolsActivePort `rotatable` (since: 2026-08-07, last_hit: 2026-08-07)
+
+**Rule**: 要用 Chrome DevTools MCP 时，**首选自己启动一个专用 Chrome**（独立 `--user-data-dir` + `--remote-debugging-port=<空闲端口>`），再用 `--browserUrl=http://127.0.0.1:<端口>` 启动 MCP。**不要伪造 DevToolsActivePort，不要依赖 `--auto-connect`**。
+
+**Wrong**:
+- `--auto-connect` 需要用户真实 Chrome 开着 + 手动开 remote debugging（Chrome ≥136 拒绝在默认 profile 上开调试端口）→ 经常连不上
+- 伪造 DevToolsActivePort（复制端口文件到默认位置骗 MCP）→ 繁琐、UUID 易过期、耗时极长，且复制 cookie 带不来登录态（Chrome ≥127 app-bound 加密）
+
+**Right**（browser-testing skill 已固化）:
+1. `launch_skill_chrome.ps1`：复用/自动启动专用 Chrome（持久 profile `~\.chrome-skill`，挑空闲端口 9222+），TCP 活性确认
+2. MCP 用 `--browserUrl=http://127.0.0.1:<端口>` 显式连接（无 auto-connect、无 DevToolsActivePort）
+3. MCP 本体用本地固定安装（`~/.claude/chrome-devtools-mcp`），启动不联网
+4. 登录态走持久 profile：`login.bat` 一次性登录，之后所有会话复用
+
+**Why**: 关键洞察 = **别对抗 MCP 的自动发现，给它一个确定的 URL**。Chrome ≥136 只是禁止在**默认** user-data-dir 上开调试端口；独立 profile 上 `--remote-debugging-port` 照常有效。所以自己起一个专用浏览器就绕开了禁令，`--browserUrl` 是显式连接、完全确定。`--auto-connect` 需要读 `DevToolsActivePort` 文件 + 手动 toggle，两个脆弱点都消掉了。
+**检测**: MCP 连不上 → 跑 `scripts/launch_skill_chrome.ps1`，看 `~/.claude/chrome-devtools.json` 的 `ok`/`port`；`list_pages` 端到端 3-4s 应连上。
+**命中**: 2026-08-07 — 用户旧会话反复调试靠伪造 DevToolsActivePort 才连上且无登录态；新方案热/冷启动、多会话并发全部 PASS
+
+---
+
 ## ★★★ Chrome DevTools 连接：DevToolsActivePort 路径不匹配 + UUID 过期 `permanent`
+
+> ⚠️ **首选上方新方案**（自己起专用 Chrome + `--browserUrl`），本 hack 仅在无法自己启动浏览器时才需要。
 
 **Rule**: Chrome `--remote-debugging-port` 强制 `--user-data-dir` 为非默认目录，但 MCP 工具硬编码读取 `%LOCALAPPDATA%\Google\Chrome\User Data\DevToolsActivePort`。**不要试图让 MCP 工具读新目录——直接伪造它要的文件**。另外 Chrome 重启后 UUID 会变，旧文件里的 UUID 即使路径正确也连不上。
 

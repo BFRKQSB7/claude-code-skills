@@ -13,7 +13,7 @@
 | Skill | [lessons-skill.md](lessons-skill.md) | 25 | 发布流程/教训审查/SKILL.md 架构/术语/命名/衍生项目文档/多语言 README/代理指令禁弹窗/断言验运行时/迭代基线优化/手动插件注册 |
 | Debug | [lessons-debug.md](lessons-debug.md) | 9 | 反馈循环优先/调试日志标记/多假设锚定/代理端口验活/行尾差异/实测当前行为/spawnSync 模拟 stdin |
 | Security | [lessons-security.md](lessons-security.md) | 8 | 注入/凭证泄露/供应链/反序列化/CORS/加密 |
-| **MCP** | **[lessons-mcp.md](lessons-mcp.md)** | **6** | **Chrome 连接/WebFetch 拦截/WebSearch 技巧/截图溢出/浏览器 vs WebFetch** |
+| **MCP** | **[lessons-mcp.md](lessons-mcp.md)** | **7** | **自起 Chrome+--browserUrl 连接/DevToolsActivePort hack 备选/WebFetch 拦截/WebSearch 技巧/截图溢出/浏览器 vs WebFetch** |
 
 ## 按需加载决策树
 
@@ -24,7 +24,7 @@
 任务含 "skill/plugin/design/naming/description/readme/i18n/multi-language/多语言/翻译/技能/反省/学习" → lessons-skill.md (25条)
 任务含 "debug/diagnose/bug/fix/log/调试/诊断/复现/排查" → lessons-debug.md (9条，~100行)
 任务含 "security/auth/token/password/encrypt/injection/安全/认证/加密" → lessons-security.md (8条，~80行)
-任务含 "mcp/chrome/devtools/browser/webfetch/websearch/navigate/snapshot/screenshot/evaluate_script/click/fill/select_page/new_page/fetch/search/URL/huggingface/page/浏览器/搜索/截图/网页/访问/下载/渲染/表单" → lessons-mcp.md (6条，~90行) ⚠️
+任务含 "mcp/chrome/devtools/browser/webfetch/websearch/navigate/snapshot/screenshot/evaluate_script/click/fill/select_page/new_page/fetch/search/URL/huggingface/page/浏览器/搜索/截图/网页/访问/下载/渲染/表单" → lessons-mcp.md (7条，~110行) ⚠️
 ```
 
 ## 交叉索引
