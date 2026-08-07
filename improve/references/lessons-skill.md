@@ -205,7 +205,7 @@ git add -A && git commit -m "sync: improve <改动摘要>" && git push
 **Wrong**: `~/.claude/skills/html-guide`（加载源，含全部新改动）与桌面 `html-guide-skill` 仓库（v1.0 旧副本）各自独立。若直接基于旧副本改发布，会把旧版内容推上去，用户的"新改动"丢失。
 **Right**: 发布前 diff 两份 → 明确以加载目录为源 → 把过时副本删掉或标记 deprecated，避免双源长期分叉。
 **Why**: skill 安装目录与发布仓库很容易分叉（本会话桌面副本停留在 v1.0，加载目录已是 v2.0）。用错源 = 线上 SKILL.md/README 落后于实际功能。
-**检测**: 发布前 `diff -rq` 源目录与 repo，有差异先确认改动方向再发布。
+**检测**: 发布前 `diff -rq` 源目录与 repo，有差异先确认改动方向再发布。⚠️ **CRLF/LF 假差异**：Windows 下 repo 检出 CRLF、加载目录常为 LF，`diff -rq` 会把所有文件标成 differ——先 `diff <(tr -d '\r' < repo) <(tr -d '\r' < src)` 归一化换行再数真实差异（2026-08-08：9 个文件"不同"，归一化后仅 skeleton.html 1 个真改动，8 个全是行尾噪音）
 
 ---
 
