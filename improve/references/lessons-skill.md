@@ -335,7 +335,7 @@ docs/
 
 ---
 
-### ★★ [2026-08-05] skill 发布仓库 README 独立维护 → 改 skill 不同步 README (置信度: high, 命中: 2)
+### ★★ [2026-08-05] skill 发布仓库 README 独立维护 → 改 skill 不同步 README (置信度: high, 命中: 3)
 
 **Rule**: skill 发布仓库的 `README.md` **只在 repo 里维护**（不在 `~/.claude/skills/<skill>/` 加载目录里）。发布流程「copy 加载目录 → repo」**不会带 README**——每次改 skill 后要单独检查/同步 README，否则 README 停在旧描述。
 **Wrong**: v2.0.4 把代理端口解耦到 user-config.md，只改了 search-guide.md / SKILL.md；README 目录结构注释仍写 `curl -x 127.0.0.1:7896`。用户看到 GitHub README 还有 7896 才暴露。
@@ -345,3 +345,5 @@ docs/
 3. 判断 README 是否在加载目录：`ls ~/.claude/skills/<skill>/README.md` 不存在 = 仓库独有
 **Why**: 发布源（加载目录）与仓库内容分叉，README 只在仓库侧、且发布流程不覆盖它 → 单点过期。
 **检测**: 发布后 `grep "旧值" README.md` → 0 残留；README 不在加载目录 = 记得单独看 repo 侧。
+
+**再次**: 2026-08-07 — browser-testing-skill 懒启动发布，README「这个包装器做了什么」仍写旧急切启动、目录结构注释仍写「自动启动」；靠行为术语 grep（"自动启动/每次启动/启动时"）而非版本号 grep 才抓到。教训：README 过期点不止版本号，还有**行为描述**——改成用行为术语 grep。

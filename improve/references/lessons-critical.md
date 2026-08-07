@@ -14,7 +14,7 @@
 
 ---
 
-## ★★★ 变更后未全局 grep → 引用断裂 `rotatable` (since: 2026-06-21, last_hit: 2026-06-21)
+## ★★★ 变更后未全局 grep → 引用断裂 `rotatable` (since: 2026-06-21, last_hit: 2026-08-07)
 
 **Rule**: 任何变更操作（删除/重命名/移动/重构）→ `grep -r "old-identifier"` 全项目文本文件 → 逐条更新 → 再宣称完成
 **Why**: 人眼无法穷举所有引用点。一条引用断裂 = 安装脚本 404 / 用户看到旧版 README / GitHub 页面展示旧内容。
@@ -38,7 +38,7 @@
 
 ---
 
-## ★★★ 发布流程手动重复 → 遗漏步骤 `rotatable` (since: 2026-06-21, last_hit: 2026-06-21)
+## ★★★ 发布流程手动重复 → 遗漏步骤 `rotatable` (since: 2026-06-21, last_hit: 2026-08-07)
 
 **Rule**: >2 次的重复流程必须自动化或硬编码检查点，不能依赖人脑清单
 **Wrong**: 发布依赖人脑记步骤 → 本次会话遗漏 2 次（文件名引用 + 分支错位）
@@ -109,7 +109,7 @@
 
 ---
 
-## ★★★ 提交身份错配 → 贡献归属陌生人 `rotatable` (since: 2026-08-05, last_hit: 2026-08-05)
+## ★★★ 提交身份错配 → 贡献归属陌生人 `permanent` (since: 2026-08-05, last_hit: 2026-08-07)
 
 **Rule**: 任何 git commit 前，必须确认提交身份正确 — commit 前 `git config user.email`、commit 后 `git log -1 --format='%an <%ae>'` 复核。发布流程 Phase 2 已加「提交身份」门禁。
 **Why**: git 提交邮箱会被 GitHub 关联到对应账号。身份错配 = 整个仓库的贡献被归属给陌生人（不是协作者，只是贡献显示错人），且协作者列表不会提示 — 只能靠 `git filter-branch --env-filter` 重写历史 + `git push --force` 修正，属于破坏性操作。
