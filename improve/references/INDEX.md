@@ -8,7 +8,7 @@
 | Domain | 文件 | 教训数 | 一句话 |
 |--------|------|--------|--------|
 | Process | [lessons-process.md](lessons-process.md) | 4 | 后台进程/锁/启动竞态/daemon hook async |
-| Cleanup | [lessons-cleanup.md](lessons-cleanup.md) | 2 (7子模式) | 变更后全局 grep 防引用断裂 / 衍生项目旧仓库引用 |
+| Cleanup | [lessons-cleanup.md](lessons-cleanup.md) | 3 (7子模式) | 变更后全局 grep 防引用断裂 / 衍生项目旧仓库引用 / 发布文件禁带本机个性化信息 |
 | State | [lessons-state.md](lessons-state.md) | 8 | API 采样/跨平台 CLI/实时性/statusLine 被重写/凭据回退/残留进程污染/模型 env 重映射 |
 | Skill | [lessons-skill.md](lessons-skill.md) | 27 | 发布流程/教训审查/SKILL.md 架构/术语/命名/衍生项目文档/多语言 README/代理指令禁弹窗/断言验运行时/迭代基线优化/手动插件注册/独立仓库确认/运行目录与 diff 克隆分离 |
 | Debug | [lessons-debug.md](lessons-debug.md) | 9 | 反馈循环优先/调试日志标记/多假设锚定/代理端口验活/行尾差异/实测当前行为/spawnSync 模拟 stdin |
@@ -19,7 +19,7 @@
 
 ```
 任务含 "daemon/lock/pid/启动/后台/守护/竞态" → lessons-process.md (4条，~50行)
-任务含 "rename/delete/version/release/重命名/版本/发布/打包" → lessons-cleanup.md (1条+6子模式，~20行)
+任务含 "rename/delete/version/release/重命名/版本/发布/打包" → lessons-cleanup.md (2条+6子模式，~30行)
 任务含 "api/monitoring/cli/cross-platform/windows/path/采样/跨平台" → lessons-state.md (8条，~95行)
 任务含 "skill/plugin/design/naming/description/readme/i18n/multi-language/多语言/翻译/技能/反省/学习" → lessons-skill.md (27条)
 任务含 "debug/diagnose/bug/fix/log/调试/诊断/复现/排查" → lessons-debug.md (9条，~100行)

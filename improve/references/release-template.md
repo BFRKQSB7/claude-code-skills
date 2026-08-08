@@ -22,6 +22,7 @@ gh release view <latest-tag> --json name,body
 - [ ] 新 title 与现有标题结构一致（`vX.Y.Z — <描述>`，**不含项目名前缀**——仓库名已标识）
 - [ ] 正文模板与最新旧版对齐
 - [ ] 正文**开门见山**：版本号只在 title 字段；正文直接以 `## 小节` 开头；不含版本号标题、不含项目名开场白（教训：html-guide 三个版本区间格式不一，2026-08-08 已统一标题 + 正文）
+- [ ] **发布文件已扫描本机个性化信息**（OS 用户名 / 含用户名的绝对路径 / 本机代理端口 / token）→ 零残留；只允许 `~` / `%USERPROFILE%` / `Path.home()` 等通用形式（教训：html-guide / kakuyomu / balance-hud / improve 曾带 `C:\Users\<用户名>\` 泄漏，2026-08-08 清理）
 
 ### 1. 创建 Release
 
