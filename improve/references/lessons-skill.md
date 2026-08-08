@@ -347,3 +347,25 @@ docs/
 **检测**: 发布后 `grep "旧值" README.md` → 0 残留；README 不在加载目录 = 记得单独看 repo 侧。
 
 **再次**: 2026-08-07 — browser-testing-skill 懒启动发布，README「这个包装器做了什么」仍写旧急切启动、目录结构注释仍写「自动启动」；靠行为术语 grep（"自动启动/每次启动/启动时"）而非版本号 grep 才抓到。教训：README 过期点不止版本号，还有**行为描述**——改成用行为术语 grep。
+
+---
+
+### ★★ [2026-08-08] skill 有独立仓库 → 发布前先确认目标仓库 (置信度: high, 命中: 1)
+
+**Rule**: 发布/更新自维护型 skill 前，先确认它有没有**独立仓库**（`gh repo list <owner>` / 本地找 clone），别想当然把所有 skill 都丢进 `claude-code-skills` 聚合仓库。
+**Wrong**: 直接把 html-guide 拷进 `claude-code-skills` 并准备提交 → 用户提示「有独立仓库啊」才回头。实际 html-guide 有独立 `BFRKQSB7/html-guide-skill` 仓库 + 本地 clone `C:/Users/NYRO/html-guide-skill`。
+**Right**: 动拷贝前先 `gh repo list BFRKQSB7 --limit 30` 看独立仓库 + `find ~ -maxdepth 3 -iname "*<skill>*"` 找本地 clone；命中独立仓库就进它，没命中才考虑聚合仓库。
+**泛化**: 自维护型 skill 发布的第一问是「这个 skill 的仓库在哪」，不是「拷贝到哪」。
+
+---
+
+### ★★ [2026-08-08] skill 运行目录固定在 ~/.claude/skills，项目文件夹只放远端克隆用于 diff (置信度: high, 命中: 1)
+
+**Rule**: 自维护型 skill 的**运行目录**（`~/.claude/skills/<name>`，Claude 从这加载）保持真实目录、不搬到项目文件夹；项目文件夹只放**远端仓库克隆**，用于与运行目录 diff 对比 + 发布推送。发布流程 = 克隆/拉取远端 → 与运行目录 diff → 把改动同步进克隆 → commit + tag + push。
+**Wrong**: 我把克隆移进项目文件夹并把运行目录做成 junction「合一」（单份文件）——用户明确不要：技能就该留在 `~/.claude/skills/html-guide`，项目文件夹只是 diff 对比用的远端克隆。
+**Right**:
+1. `~/.claude/skills/<name>` 永远是真实目录（个人配置 user-config.md 也在这，`.gitignore` 排除）
+2. 项目文件夹 `<name>-skill/` 是远端克隆（含 LICENSE / README，属仓库侧，不含个人配置）
+3. 发布：`git -C <克隆> pull` → `diff -rq <运行目录> <克隆>` 找改动 → 同步改动文件（个人配置除外）→ commit `X.Y.Z: <skill> — <摘要>` + tag + push + `gh release create`
+4. 清理 junction 时用 `cmd //c rmdir <junction路径>`（只删链接不碰目标）；`rm -rf` 会跟进 junction 删掉目标克隆
+**Why**: 运行目录负责「被 Claude 加载」，克隆负责「与远端对比 / 推送」，职责分离。跨目录拷贝不可避免，但应整批、有 diff 对照，而非零散乱拷。
