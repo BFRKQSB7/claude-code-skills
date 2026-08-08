@@ -29,6 +29,13 @@
 **Rule**: 对列表每个元素遍历另一列表 → O(N²)。常见反模式：`for x in xs: if x in ys:`。
 **Right**: 将内层查找转为 `set`/`Map` O(1) → O(N)。或用 `itertools.product`/`cross-join` 明确表达意图。
 
+### ★ 单数 querySelector 做集合变换 → 只影响第一个元素 (置信度: high, 命中: 1)
+
+**Rule**: 对「集合所有元素」做统一变换时，用 `querySelectorAll` + 循环遍历全部；`querySelector("X span")` 只返回第一个匹配，把它当循环外引用逐个改，其余元素会**静默漏掉**——不报错，界面表现成「第一个特别大 / 其余正常」。
+**Wrong**: html-guide card-template 的 fit() 里 `var span = steps.querySelector("li span")`，while 循环只 `span.style.fontSize = ...` → 只有第一个步骤字号被放大，其余停留基线（用户点名「为什么第一步字号那么大」）。
+**Right**: `var spans = steps.querySelectorAll("li span")` → 循环 `for (var s=0; s<spans.length; s++) spans[s].style.fontSize = ...`。
+**检测**: 集合变换逻辑出现 `querySelector("...span")` / `[...][0]` 且只在循环外改它 → 大概率只改第一个。`grep -n "querySelector("` 排除 `All`，逐个确认是否在 `forEach`/`querySelectorAll` 作用域内。
+
 ---
 
 ## 语言差异
