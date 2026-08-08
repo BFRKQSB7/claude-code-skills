@@ -10,7 +10,7 @@
 **Wrong**: `statusLine.command` 直接指向 `node ~/.claude/plugins/balance-hud/dist/index.js`，HUD 正常但 `/balance-hud:configure` 等"用不了"。
 **Right**: 注册本地插件（路径**必须正斜杠**，反斜杠会被 CLI 当 marketplace 名解析 → 报 `Marketplace "...not found"`）:
 ```
-/plugin marketplace add C:/Users/NYRO/.claude/plugins/balance-hud
+/plugin marketplace add ~/.claude/plugins/balance-hud
 /plugin install balance-hud
 ```
 然后完全重启 Claude Code。安装会复制到 `~/.claude/plugins/cache/` 并从副本注册命令；**不**动 `statusLine`。之后**不要**再跑 `/balance-hud:setup`（会重写 statusLine.command）。判断已注册：`installed_plugins.json` 含该插件条目。
@@ -22,13 +22,13 @@
 
 **Rule**: 任何修改 improve skill 文件（SKILL.md / lessons / INDEX / 删文件）后，Phase 3 反省时把改动同步到 GitHub 备份 repo `BFRKQSB7/claude-code-skills` 的 `improve/` 并 push
 **Why**: 备份 repo 是 `~/.claude/skills/` 的 self-use 备份。不同步则多会话后备份严重过期（本会话发现备份仍含已删除的 `agent-brief.md` / `handoff.md` / `references/lessons-learned.md`）
-**Right**: 同步流程（备份 clone 在 `C:/Users/NYRO/claude-code-skills`，已设本地代理 7896）:
+**Right**: 同步流程（备份 clone 在 `~/claude-code-skills`，已设本地代理）:
 ```bash
-cd C:/Users/NYRO/claude-code-skills && git pull
-rsync -a --delete "C:/Users/NYRO/.claude/skills/improve/" improve/
+cd ~/claude-code-skills && git pull
+rsync -a --delete "~/.claude/skills/improve/" improve/
 git add -A && git commit -m "sync: improve <改动摘要>" && git push
 ```
-**检测**: 修改后 `git -C C:/Users/NYRO/claude-code-skills status --short improve/` 无输出 = 已同步
+**检测**: 修改后 `git -C ~/claude-code-skills status --short improve/` 无输出 = 已同步
 **泛化**: 任何"自修改型"skill（会更新自身教训文件）都要内置备份步骤，否则知识库与备份分叉。
 
 ---
@@ -360,7 +360,7 @@ docs/
 ### ★★ [2026-08-08] skill 有独立仓库 → 发布前先确认目标仓库 (置信度: high, 命中: 1)
 
 **Rule**: 发布/更新自维护型 skill 前，先确认它有没有**独立仓库**（`gh repo list <owner>` / 本地找 clone），别想当然把所有 skill 都丢进 `claude-code-skills` 聚合仓库。
-**Wrong**: 直接把 html-guide 拷进 `claude-code-skills` 并准备提交 → 用户提示「有独立仓库啊」才回头。实际 html-guide 有独立 `BFRKQSB7/html-guide-skill` 仓库 + 本地 clone `C:/Users/NYRO/html-guide-skill`。
+**Wrong**: 直接把 html-guide 拷进 `claude-code-skills` 并准备提交 → 用户提示「有独立仓库啊」才回头。实际 html-guide 有独立 `BFRKQSB7/html-guide-skill` 仓库 + 本地 clone `~/html-guide-skill`。
 **Right**: 动拷贝前先 `gh repo list BFRKQSB7 --limit 30` 看独立仓库 + `find ~ -maxdepth 3 -iname "*<skill>*"` 找本地 clone；命中独立仓库就进它，没命中才考虑聚合仓库。
 **泛化**: 自维护型 skill 发布的第一问是「这个 skill 的仓库在哪」，不是「拷贝到哪」。
 
