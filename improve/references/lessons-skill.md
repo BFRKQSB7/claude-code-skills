@@ -376,3 +376,16 @@ docs/
 3. 发布：`git -C <克隆> pull` → `diff -rq <运行目录> <克隆>` 找改动 → 同步改动文件（个人配置除外）→ commit `X.Y.Z: <skill> — <摘要>` + tag + push + `gh release create`
 4. 清理 junction 时用 `cmd //c rmdir <junction路径>`（只删链接不碰目标）；`rm -rf` 会跟进 junction 删掉目标克隆
 **Why**: 运行目录负责「被 Claude 加载」，克隆负责「与远端对比 / 推送」，职责分离。跨目录拷贝不可避免，但应整批、有 diff 对照，而非零散乱拷。
+
+---
+
+## ★★ [2026-08-09] 发布验证用 raw.githubusercontent.com → CDN 缓存陈旧误判失败 (置信度: high, 命中: 1)
+
+**Rule**: 推送后验证文件是否落地，用 GitHub API `contents/<path>?ref=<branch>`（读真实 blob，可对比 blob sha）或 `git ls-remote` 确认分支 HEAD；<b>别用 `raw.githubusercontent.com` grep 标记行做唯一验证</b>——raw CDN 有缓存且**逐文件不一致**（同一次推送，某文件已新、另一文件还旧），grep 0 命中会误判「推送失败」。
+**Wrong**: html-guide v2.2.2 推送后，raw 抓 4 个文件验证标记行：card-template 显示新内容（querySelectorAll）、skeleton 却 0 命中（仍是旧的）——同一 commit 里不可能一旧一新，纯属 CDN 逐文件缓存错位。用 `git ls-remote` + API contents base64 解码后，4 文件 sha 与本地 diff 完全一致，实为推送成功。
+**Right**:
+1. `git ls-remote <url>` → 确认 `HEAD` / `refs/heads/<默认分支>` 都指向本地提交 sha（默认分支是否正确是常见坑，lessons-critical #6）
+2. `api.github.com/repos/<o>/<r>/contents/<path>?ref=<branch>` → base64 解码 → grep 标记行 + 对比 `sha` 与 `git diff` 的 blob sha
+3. raw.githubusercontent.com 只作辅助，出现「同批文件新旧不一」先怀疑 CDN 缓存，别怀疑自己的推送
+**Why**: raw CDN 边缘缓存 TTL 不同，刚 push 的文件可能在部分区域/文件上仍返回旧版；GitHub API contents 直读仓库真实 blob，无缓存层。
+**检测**: 验证命令优先 `gh api repos/{owner}/{repo}/contents/{path}?ref={branch}` 或 `git ls-remote`；raw 命中原先依赖的标记行不可作为「推送失败」的唯一依据。
