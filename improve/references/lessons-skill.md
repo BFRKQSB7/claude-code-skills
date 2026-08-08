@@ -39,21 +39,25 @@ git add -A && git commit -m "sync: improve <改动摘要>" && git push
 
 ---
 
-## ★★ [2026-07-26] 发布前未检查现有 Release 格式 → 版本号/标题不一致 (置信度: high, 命中: 1)
+## ★★ [2026-07-26] 发布前未检查现有 Release 格式 → 版本号/标题不一致 (置信度: high, 命中: 2)
 
-**Rule**: 创建新 Release 前必须 `gh release list` 查看现有格式（版本号风格、标题结构、正文模板），严格对齐后再创建
-**Wrong**: 直接 `gh release create v2026.07.26 --title "LAN IP..."` — 日期格式版本号 vs 已有 v1.0.0 semver，标题不含 "ACGN Translation Guide" 前缀 → 用户指出格式不统一
+**Rule**: 创建新 Release 前必须 `gh release list` + `gh release view <最新>` 查看现有格式（版本号风格、标题结构、**正文模板**），严格对齐后再创建。检查的不止标题，还有**正文结构**：是否带 H1 版本标题、是否带项目名开场白、小节用什么标题。
+**Wrong**: 
+- 直接 `gh release create v2026.07.26 --title "LAN IP..."` — 日期格式版本号 vs 已有 v1.0.0 semver，标题不含 "ACGN Translation Guide" 前缀 → 用户指出格式不统一
+- html-guide：v2.0.9 及更早正文以 `# vX.Y.Z` H1 + 「Claude Code skill：…」开场白开头 → 标题在页面出现两次、开场白冗长；v2.2.0 又用 `## v2.2.0 更新`（带版本号小标题）→ 与 v2.1.0 不一致
 **Right**: 
 1. `gh release list` → 看到 `v1.0.0 — ACGN Translation Guide 首次发布`
 2. 提取模板：版本号 `v<MAJOR>.<MINOR>.<PATCH>`，标题 `vX.Y.Z — ACGN Translation Guide <描述>`，正文 `# vX.Y.Z — <描述>` + 中文分段
 3. 严格套用 → `v1.1.0 — ACGN Translation Guide LAN IP 自动检测 & API 显示统一`
+**统一正文标准（html-guide 定稿，项目可按此对齐）**：**版本号只在 title 字段**；正文**开门见山**——直接以 `## 更新 / 新增 / 完善 / 特性` 小节开头；正文**不含版本号标题、不含项目名开场白**。
 **Why**: 追加内容不匹配现有格式 = 看起来像两个不相关项目。Release 页面是用户对项目的"第一眼版本履历"——格式跳跃 = 信任度下降。操作前不读现状 = 闭眼写代码。
 **防御**: Phase 2 发布流程增加门禁步骤：
-- [ ] `gh release list` 检查现有 Release 格式（版本号、标题、正文模板）
-- [ ] 新 Release 的 tag/title/body 是否严格套用现有模板？
+- [ ] `gh release list` 检查现有 Release 格式（版本号、标题、**正文模板**）
+- [ ] 新 Release 的 tag/title/body 是否严格套用现有模板？（正文是否开门见山、不含版本号标题 / 项目名开场白）
 - [ ] 创建后 `gh release view <new>` 与最新旧版对比确认格式一致
 
 **再次**: 2026-07-26 — acgn-translation-guide v1.1.0 首次用 `v2026.07.26` 日期 tag，用户指出与 v1.0.0 格式不一致 → 删旧 tag 重建
+**再次**: 2026-08-08 — html-guide 三个版本区间正文格式互不一致（≤2.0.9 带 H1+开场白、v2.2.0 带版本号小标题、v2.1.0 开门见山）；用户点名要统一。已批量把 13 个 Release 正文统一为「版本号只在 title、正文开门见山 `## 小节`」。教训：发第一个 Release 时就定下正文模板，之后每版严格套用。
 
 ---
 
