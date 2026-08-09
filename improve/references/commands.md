@@ -16,6 +16,8 @@ detect_lang .
 > commit 后复核 `git log -1 --format='%an <%ae>'`。提交邮箱会被 GitHub 关联到账号 → 错配 = 整个仓库贡献归属陌生人，
 > 只能 `git filter-branch --env-filter` 重写历史 + `git push --force` 修正。
 
+> ⚠️ **本地克隆纪律（用户登记 2026-08-10）**: 为对比/改版本而克隆的仓库，**先 `git pull` 拉最新**，改完/对比完**删除克隆**（`rm -rf <克隆目录>`），不留多余文件。误留 = 后续误用旧副本 + 磁盘垃圾。
+
 > ⚠️ **发布偏好（用户登记 2026-08-09，发布必做）**:
 > 1. **About 必填** — 建仓后 `gh repo edit <owner>/<repo> --description "<描述>"` 必须执行，空 About 不允许发布。
 > 2. **双语言 README（文件切换版，★ 2026-08-10 更正）** — 根 `README.md` 放中文（默认），英文在 `docs/en/README.md`，标题下放语言切换条。**发布/改 README 时中英两版必须同步更新**，不允许只改一版。
