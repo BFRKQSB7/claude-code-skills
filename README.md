@@ -12,7 +12,6 @@
 | **minimax-h3** | MiniMax H3（海螺）视频提示词改写器：T2VA/I2VA/FL2VA/L2VA/Ref2VA 五模式 + 本地 ComfyUI 成人内容实跑坑 |
 | **pinokio** | Pinokio 应用发现与运行时控制（pterm）+ 本地 AI 工具安装排错：llama.cpp 启动器/.bat、Open WebUI、SearXNG、多模型切换 |
 | **playwright-cli** | 浏览器自动化与 Playwright 测试 |
-| **ppt-master** | PowerPoint / 演示文稿生成与设计系统 |
 | **skill-creator** | 创建新的 Claude Code skills |
 
 ## 使用方式
@@ -47,7 +46,6 @@ cd ~/.claude/skills && git pull
 | **minimax-h3** | MiniMax H3 (Hailuo) video prompt rewriter: T2VA/I2VA/FL2VA/L2VA/Ref2VA + local ComfyUI adult-content pitfalls |
 | **pinokio** | Pinokio app discovery & runtime control (pterm) + local AI tool install & troubleshooting: llama.cpp launcher/.bat, Open WebUI, SearXNG, multi-model switching |
 | **playwright-cli** | Browser automation & Playwright testing |
-| **ppt-master** | PowerPoint / presentation generation & design system |
 | **skill-creator** | Create new Claude Code skills |
 
 ## Usage
