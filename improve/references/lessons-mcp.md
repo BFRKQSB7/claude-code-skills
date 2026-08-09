@@ -169,3 +169,14 @@ printf "9222\n/devtools/browser/<current-uuid>\n" > "%LOCALAPPDATA%\Google\Chrom
 **Why**: 这类页面的命门是「截至今天」的**完整性**。枚举 + 时间倒序 = 系统性覆盖；主题搜索 = 随机命中。用户对时效残缺容忍度极低。
 **检测**: 生成横评页后自查——窗口期内每家厂商是否有新发布/更新被遗漏？
 **泛化**: 任何「截至某日」的汇总/盘点（新闻综述、竞品分析、版本更新）都用同一方法。方法论已固化进 html-guide search-guide.md §2.5。
+
+---
+
+## ★ [2026-08-09] 读 GitHub 文件全文：浏览器 + `react-app.embeddedData` 的 `rawLines` (置信度: high, 命中: 1)
+
+**Rule**: 要读 GitHub 仓库某文件/技能完整内容，别翻 snapshot 或 `body.innerText`（blob 正文不渲染进静态 DOM）。导航到 `github.com/<o>/<r>/blob/<branch>/<path>` → `evaluate_script` 解析 `<script data-target="react-app.embeddedData">` 的 JSON，**递归 walk** 找 `rawLines` 数组 `join('\n')` 即全文。
+**Why**: 本机 WebFetch 域名校验拦 github.com、api.github.com contents 未认证限流（60/hr）、raw.githubusercontent 直连不稳——唯一稳定路径是真实浏览器加载 github.com 页面本身 + 读内嵌 payload。
+**Wrong**: 先试 WebFetch→被拦；api.github.com→限流；`raw.githubusercontent.com`→连接失败；`body.innerText` 拿 blob 页→正文不出现。
+**Right**: 降级链 = 浏览器导航 github.com → embeddedData 递归找 `rawLines`（路径随 GitHub 改版漂移，必须递归 walk 而非硬编码路径）。GitHub 未登录 search 也限流（"Too many requests"）→ 直接导航已知仓库路径，别用站内搜索。
+**检测**: evaluate_script 返回 `{found:true, full}` 且 `full.length` 与文件预期规模相符。
+

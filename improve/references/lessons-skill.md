@@ -414,3 +414,11 @@ docs/
 **Right**: index.html + gh api 开启 + 轮询到 200（`for i in $(seq 1 6); do sleep 20; curl ...; [ 200 ] && break; done`）
 **Why**: GitHub Pages 只把 `index.html` 作为根路径默认文档；Pages 首次构建需时间（Actions 或 legacy 构建），期间站点未就绪。
 **关联**: 发布验证见上条（CDN 缓存）；提交身份见 lessons-critical「提交身份错配」。
+
+---
+
+## ★ [2026-08-09] 从外部 skill 合并：用「机制 → 本地等价工具」映射表落地 (置信度: high, 命中: 1)
+
+**泛化**: 调研外部 skill（如 browser-use）时，把候选能力逐条映射成本地 skill 的「机制 → 工具/绕行」条目落盘（如 `references/mechanisms.md`），而不是只总结概念。概念会蒸发，映射表能直接进参考文件。
+**核心**: 外部借鉴的落地单位是「可执行的映射条目」，不是「学到了什么」。架构不同也没关系——搬做法不搬管道（browser-use 是 CDP daemon，本地是 MCP，合并的是 When-Not-to-Use 守卫 / 诊断优先 / 登录墙策略 / 按机制拆参考，不是它的 CDP 代码）。
+
