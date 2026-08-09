@@ -280,6 +280,16 @@ docs/
 
 ---
 
+## ★ [2026-08-09] 纯外语 README 发布 → 被要求补中文版 (置信度: high, 命中: 1)
+
+**Rule**: 发布到 GitHub 的任何仓库，README 不允许只有外语（英文/日文等）——必须含中文版。默认结构：**中文为主放前，English 为副放后**（单文件双语，见 readme-template.md「多语言版本」）。
+**Wrong**: claude-code-skills 备份仓 README 纯英文（"Personal collection of custom Claude Code skills. Self-use backup."），2026-08-09 用户要求补中文
+**Right**: 中文主段 + `---` + `## English` 段（claude-code-skills 2026-08-09 已改）
+**Why**: 用户中文母语，所有 README 必须能被中文读者理解。纯外语 README = 不符合发布标准。
+**泛化**: "语言要求"是发布硬规则不是风格建议。发布前检查：README 无中文 → 必须先补中文版（`grep` 中文特征字确认）。
+
+---
+
 ## ★★ [2026-07-10] 部署指南面向技术人员 → 小白完全看不懂 (置信度: high, 命中: 1)
 
 **Rule**: 部署/安装指南的目标读者是**不知道这个工具是什么的人**，而不是已经会的人。每个步骤必须回答四个问题：是什么？为什么？怎么做？在哪里点？
