@@ -3,27 +3,10 @@
 ## 语言检测
 
 ```bash
-# 扫描当前目录，按优先级输出主要语言
-# 优先级: 最近修改的源代码文件 > 数量最多的扩展名 > 用户指定
-detect_lang() {
-  local exts=("py" "js" "ts" "tsx" "jsx" "rs" "go" "sh")
-  local lang=""
-  for ext in "${exts[@]}"; do
-    count=$(find . -maxdepth 3 -name "*.$ext" 2>/dev/null | wc -l)
-    if [ "$count" -gt 0 ]; then
-      case "$ext" in
-        py) lang="python";;
-        js|ts|tsx|jsx|mjs|cjs) lang="javascript";;
-        rs) lang="rust";;
-        go) lang="go";;
-        sh|bash|zsh) lang="bash";;
-      esac
-      echo "$lang ($count .$ext files)"
-      return
-    fi
-  done
-  echo "unknown"
-}
+# 用脚本（比内联更健壮，过滤 node_modules/.git/cache）:
+# 用法: source scripts/detect-lang.sh [目录] → python|javascript|rust|go|bash|unknown
+source scripts/detect-lang.sh
+detect_lang .
 ```
 
 ## 发布命令（语言自适应）
