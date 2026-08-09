@@ -22,7 +22,7 @@
 任务含 "rename/delete/version/release/重命名/版本/发布/打包" → lessons-cleanup.md (2条+6子模式，~30行)
 任务含 "api/monitoring/cli/cross-platform/windows/path/采样/跨平台" → lessons-state.md (8条，~95行)
 任务含 "skill/plugin/design/naming/description/readme/i18n/multi-language/多语言/翻译/技能/反省/学习" → lessons-skill.md (28条)
-任务含 "debug/diagnose/bug/fix/log/调试/诊断/复现/排查" → lessons-debug.md (9条，~100行)
+任务含 "debug/diagnose/bug/fix/log/调试/诊断/复现/排查/diff/compare/对比/行尾/换行符/CRLF" → lessons-debug.md (9条，~100行)
 任务含 "security/auth/token/password/encrypt/injection/安全/认证/加密" → lessons-security.md (8条，~80行)
 任务含 "mcp/chrome/devtools/browser/webfetch/websearch/navigate/snapshot/screenshot/evaluate_script/click/fill/select_page/new_page/fetch/search/URL/huggingface/page/浏览器/搜索/截图/网页/访问/下载/渲染/表单" → lessons-mcp.md (7条，~110行) ⚠️
 ```

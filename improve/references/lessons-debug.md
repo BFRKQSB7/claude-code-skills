@@ -1,6 +1,6 @@
 # Debug / Diagnose
 
-> 加载条件: 任务涉及 debug, diagnose, bug, 调试, 诊断, 循环, 复现
+> 加载条件: 任务涉及 debug, diagnose, bug, 调试, 诊断, 循环, 复现, diff/compare/对比, 行尾/换行符/CRLF
 
 ---
 
@@ -75,13 +75,13 @@
 
 ---
 
-## ★ [2026-08-01] 跨克隆/zip 比较"全部文件不同" → 先查行尾 (置信度: high, 命中: 1)
+## ★★ [2026-08-01] 比较文件树"全部文件不同"/diff 差异行数巨大 → 先查行尾 (置信度: high, 命中: 2) (再次: 2026-08-09)
 
-**场景**: 比较 Windows 上 zip 解压的插件与 git clone 的同一项目，`diff -rq` 与逐文件 diff 均显示"所有文件都不同"，实则内容一致
-**根因**: CRLF vs LF 行尾差异 — PowerShell `Expand-Archive` 保留 CRLF，git clone + `core.autocrlf` 产生 LF；`diff` 把每行都当不同
-**修复**: `cat -A file` / `file file` 查行尾 → `diff --strip-trailing-cr file1 file2` 或去行尾后对比内容
-**Why**: Windows 文件系统无行尾语义，同一源码不同落地方式（zip / clone / 编辑器）可产生两种行尾；"全部不同"是行尾漂移的强信号
-**泛化**: 比较两个文件树时，若 diff 显示全量不同，先排除行尾差异再看内容，避免误判"内容分叉"导致白费排查。
+**场景**: (1) 比较 Windows 上 zip 解压的插件与 git clone 的同一项目，`diff -rq` 与逐文件 diff 均显示"所有文件都不同"；(2) 本地 skill 目录 vs 备份仓逐文件 diff 显示每文件 320-980 行差异，实则内容一致
+**根因**: CRLF vs LF 行尾差异 — PowerShell `Expand-Archive` 保留 CRLF，git clone + `core.autocrlf` 产生 LF；`diff` 把每行都当不同。**diff 差异行数巨大（数百行级）本身就是换行符漂移的强信号**
+**修复**: `cat -A file` / `file file` 查行尾 → `diff --strip-trailing-cr file1 file2` 先排除行尾，再判内容；内容级判断用 `git diff --stat` 或按行尾剥离后对比
+**Why**: Windows 文件系统无行尾语义，同一源码不同落地方式（zip / clone / 备份仓同步 / 编辑器）可产生两种行尾；"全部不同"或"全文件数百行 diff"都可能是行尾漂移，误判"内容分叉"会白费排查
+**泛化**: 比较两个文件树时，先排除行尾差异再看内容。差异行数巨大 → 优先怀疑行尾而非内容。
 
 ---
 

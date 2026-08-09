@@ -1,12 +1,25 @@
 ---
 name: pinokio
-description: Discover, launch, and use apps and tools for the current task.
+description: Discover, launch, and use apps and tools for the current task (pterm-first). Also covers 本地 AI 工具安装排错：Pinokio 安装失败、llama.cpp 启动器/.bat 脚本/多模型切换/推理参数、Open WebUI 配置、SearXNG 搜索无结果、联网搜索配置。
 ---
 
 # Pinokio Runtime Skill (pterm-first)
 
 Use this skill for runtime control of Pinokio apps.
 Do not ask users to manually install, launch, or call APIs when `pterm` can do it.
+
+## 安装排错索引（本地 AI 工具）
+
+llama-server / Open WebUI / SearXNG 的安装、配置与排错 → `install-fix/`：
+
+| 出问题的工具 | 看这里 |
+|-------------|--------|
+| llama.cpp 启动器 / .bat 脚本 / 多模型菜单 | [install-fix/llama-cpp-launcher.md](install-fix/llama-cpp-launcher.md) |
+| SearXNG | [install-fix/searxng.md](install-fix/searxng.md) |
+| Open WebUI | [install-fix/open-webui.md](install-fix/open-webui.md) |
+| llama.cpp 推理参数 | [install-fix/llama-cpp.md](install-fix/llama-cpp.md) |
+
+**触发词**: 启动脚本/启动器/.bat/launcher/多模型切换/菜单脚本/模板/乱码/运行不了/闪退/CRLF/ASCII/DLL/cudart/companion → llama-cpp-launcher.md；SearXNG/搜索引擎/搜索 → searxng.md；Open WebUI/WebUI/前端/网页界面 → open-webui.md；llama.cpp/推理/采样/参数/GPU/context → llama-cpp.md
 
 ## Control Plane
 

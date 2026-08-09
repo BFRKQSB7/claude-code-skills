@@ -183,7 +183,7 @@ title LLM Launcher
 echo Server exited with code: %EXIT_CODE%
 ```
 **Why**: `%ERRORLEVEL%` 是动态变量，读取时取最后一个命令的退出码。`title` 命令成功后刷新 ERRORLEVEL=0 → 丢掉真实退出码。
-**已知退出码**: 见 [llama-cpp-launcher.md](../../../AI-install-and-fix/llama-cpp-launcher.md#llamacpp-退出码速查)
+**已知退出码**: 见 [llama-cpp-launcher.md](../../../pinokio/install-fix/llama-cpp-launcher.md#llamacpp-退出码速查)
 **再次**: 2026-07-25 — aaastart.bat `:end` 添加退出码翻译时发现此坑
 
 ### ★ 管道中的循环在 subshell → 变量修改丢失 (置信度: medium, 命中: 1)
