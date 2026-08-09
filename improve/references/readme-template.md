@@ -14,7 +14,27 @@
 
 ## 多语言版本
 
-> 参考 GPT-SoVITS 模式。目录结构：根目录放默认语言，翻译放 `docs/<lang-code>/README.md`
+**默认（用户偏好 2026-08-09）**：单文件双语 —— **中文为主语言放前，英文为副语言放后**（同一文件内两段，各段带独立标题）：
+
+```
+# {项目名}（中文）
+
+> {中文一句话描述 — 做什么、给谁用}
+
+...中文正文...
+
+---
+
+## English
+
+> {English one-line description}
+
+...English body...
+```
+
+> 除非内容超长，否则默认走双语单文件；多文件目录结构（GPT-SoVITS 式）仅作备选。
+
+**备选（多文件）**：根目录放默认语言，翻译放 `docs/<lang-code>/README.md`：
 
 **English** | [**中文简体**](./docs/cn/README.md) | [**日本語**](./docs/ja/README.md)
 

@@ -33,6 +33,10 @@ detect_lang() {
 > commit 后复核 `git log -1 --format='%an <%ae>'`。提交邮箱会被 GitHub 关联到账号 → 错配 = 整个仓库贡献归属陌生人，
 > 只能 `git filter-branch --env-filter` 重写历史 + `git push --force` 修正。
 
+> ⚠️ **发布偏好（用户登记 2026-08-09，发布必做）**:
+> 1. **About 必填** — 建仓后 `gh repo edit <owner>/<repo> --description "<描述>"` 必须执行，空 About 不允许发布。
+> 2. **双语言 README** — README 默认**单文件双语**：**中文为主语言放前，英文为副语言放后**（同一文件内两段）。不用多文件目录结构（`docs/<lang>/`）除非内容超长。
+
 ### Python 项目
 ```bash
 # 版本号同步（pyproject.toml）
