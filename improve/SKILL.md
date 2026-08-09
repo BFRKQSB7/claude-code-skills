@@ -73,7 +73,7 @@ user-invocable: true
 6. 输出避坑清单；★★★ 防御措施 → Phase 2 强制门禁
 
 ## Phase 2: 执行
-**发布（语言自适应）**: 检测包管理器 → 版本号同步 → **门禁** grep 旧版本零残留 → 打包 → RELEASE+README 模板 → git push → **门禁** 验证默认分支 + GitHub 版本号
+**发布（语言自适应）**: 检测包管理器 → 版本号同步（**按 `references/commands.md` 版本号更新准则定，不自由发挥**） → **门禁** grep 旧版本零残留 → 打包 → RELEASE+README 模板 → git push → **门禁** 验证默认分支 + GitHub 版本号
 **代码生成**: 垂直切片（test1→impl1→test2→impl2），禁水平切片
 详见: [commands.md](references/commands.md)
 
@@ -84,7 +84,7 @@ user-invocable: true
 ## Review Checklist
 - [ ] Phase 0: 搜过现成方案？有就搬
 - [ ] Phase 1: 三轴已检测 + 避坑清单已出
-- [ ] SKILL.md ≤ 100 行，引用一层深，新内容符合前置「内容规范」
+- [ ] SKILL.md ≤ 300 行（skill-creator 允许 <500，本 skill 收紧到 300），引用一层深，新内容符合前置「内容规范」
 - [ ] 发布: 语言自适应 + grep 零残留 + 提交身份断言（`226671264+BFRKQSB7@users.noreply.github.com`）
 - [ ] Phase 3: 新教训按规范归档 + INDEX 教训数已更新
 - [ ] 改过 skill → 已同步 `BFRKQSB7/claude-code-skills` 的 `improve/` 并 push
