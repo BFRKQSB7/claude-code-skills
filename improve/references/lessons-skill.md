@@ -214,6 +214,8 @@ git add -A && git commit -m "sync: improve <改动摘要>" && git push
 **Why**: skill 安装目录与发布仓库很容易分叉（本会话桌面副本停留在 v1.0，加载目录已是 v2.0）。用错源 = 线上 SKILL.md/README 落后于实际功能。
 **检测**: 发布前 `diff -rq` 源目录与 repo，有差异先确认改动方向再发布。⚠️ **CRLF/LF 假差异**：Windows 下 repo 检出 CRLF、加载目录常为 LF，`diff -rq` 会把所有文件标成 differ——先 `diff <(tr -d '\r' < repo) <(tr -d '\r' < src)` 归一化换行再数真实差异（2026-08-08：9 个文件"不同"，归一化后仅 skeleton.html 1 个真改动，8 个全是行尾噪音）
 
+**再次**: 2026-08-10 — browser-testing 的发布克隆在桌面 `~/Desktop/AI/Claude/browser-testing-skill`（git 仓库），运行目录 `~/.claude/skills/browser-testing` 反而没有 .git。本会话先在桌面克隆做了合并改动、运行目录仍是旧版——两边分叉。修正：改动同步进运行目录（让 Claude 加载的版本一致），再从克隆 commit+push。教训补充：**改 skill 必须「运行目录 + 发布克隆」双向同步**，判断哪边新用归一化 diff，别只改一边。
+
 ---
 
 ## ★ [2026-08-06] 插件发布 zip 用 `git archive` 构建 → 免手动打包错误 (置信度: high, 命中: 1)
@@ -280,13 +282,14 @@ docs/
 
 ---
 
-## ★ [2026-08-09] 纯外语 README 发布 → 被要求补中文版 (置信度: high, 命中: 1)
+## ★★ [2026-08-09] 纯外语 README 发布 → 被要求补中文版 (置信度: high, 命中: 2)
 
-**Rule**: 发布到 GitHub 的任何仓库，README 不允许只有外语（英文/日文等）——必须含中文版。默认结构：**中文为主放前，English 为副放后**（单文件双语，见 readme-template.md「多语言版本」）。
+**Rule**: 发布到 GitHub 的任何仓库，README 不允许只有外语（英文/日文等）——必须含中文版。默认结构：**文件切换版**——根 `README.md` 放中文（默认，GitHub 自动渲染），英文在 `docs/en/README.md`，每个 README 标题正下方放语言切换条（见 readme-template.md「多语言版本」）。**改 README 时中英两版必须同步更新**。
 **Wrong**: claude-code-skills 备份仓 README 纯英文（"Personal collection of custom Claude Code skills. Self-use backup."），2026-08-09 用户要求补中文
-**Right**: 中文主段 + `---` + `## English` 段（claude-code-skills 2026-08-09 已改）
+**Right**: 根 `README.md` 中文 + `docs/en/README.md` 英文 + 语言切换条（claude-code-skills 2026-08-10 已改）
 **Why**: 用户中文母语，所有 README 必须能被中文读者理解。纯外语 README = 不符合发布标准。
 **泛化**: "语言要求"是发布硬规则不是风格建议。发布前检查：README 无中文 → 必须先补中文版（`grep` 中文特征字确认）。
+**再次**: 2026-08-09 首次要求补中文版，先做成单文件双语（中文主 + `## English` 副）；2026-08-10 用户**更正为文件切换版**（多文件 + 语言切换条）→ 4 个已做单文件双语的 README（balance-hud / browser-testing-skill / html-guide-skill / claude-code-skills）全部改成文件切换版，并固化「中英两版同步更新」发布门禁。教训：语言结构偏好要先问清形式（单文件 vs 文件切换），别默认。
 
 ---
 
