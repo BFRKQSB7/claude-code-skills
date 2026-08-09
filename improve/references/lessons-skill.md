@@ -4,6 +4,16 @@
 
 ---
 
+## ★ [2026-08-10] 引导器子进程跑依赖库 → 环境变量要显式传入 (置信度: high, 命中: 1)
+
+**Rule**: skill 引导器（system python 跑纯 stdlib）用 subprocess 调 venv 里依赖库做"预热下载"时，影响下载路径/行为的**环境变量必须在子进程内设置**（snippet 里 `os.environ[...]=...` 或 subprocess `env=` 传入），别假设继承后库读到。
+**Wrong**: setup.py ensure_models 预热 snippet 没设 `PADDLE_PDX_CACHE_HOME` → paddlex 把模型下到 `~/.paddlex`（默认），skill 目录 `models/` 永远"缺失" → 每次 install 重下 + 污染用户 home
+**Right**: 预热 snippet 开头 `os.environ['PADDLE_PDX_CACHE_HOME']=<skill>/models` 再 import paddleocr
+**Why**: subprocess 是独立进程；库读 `os.environ` 的时机/来源不可控，且引导器与运行时是两套解释器，缓存路径必须显式传递。
+**检测**: 下载完成后文件落在 skill 内而非 home；`ls ~/.paddlex` 不应有模型（只可能是空缓存目录）
+
+---
+
 ## ★ [2026-08-05] 手动解压插件未注册 → /plugin 斜杠命令全部不可用 (置信度: high, 命中: 1)
 
 **Rule**: 手动解压到 `~/.claude/plugins/<name>/` 的插件，只配置 `statusLine` 只能显示 HUD，**斜杠命令（`/plugin:<cmd>`）不会出现**——命令只有把插件注册进插件系统才生效。`installed_plugins.json` 为空 = 幽灵安装。

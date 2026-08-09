@@ -34,6 +34,17 @@
 **检测**: 发布后 `grep -rIn "<OS用户名>" .` 零残留 + `gh release view <新> --json body | grep "<OS用户名>"` 零残留
 
 **再次**: 2026-08-10 — html-guide 技能介绍页（公开 GitHub Pages）安装示例写死本机代理端口 `127.0.0.1:7896`，用户提醒后 v2.2.4 清为 `127.0.0.1:&lt;代理端口&gt;` 占位并重发布。教训：**代理端口也属于本机个性化信息**，且会跟着 Pages 一直公开；发公开页前 `grep -n "127.0.0.1:[0-9]" index.html` 也要零残留。
+**再次**: 2026-08-10 — llm-sight 发布前扫描抓到 **commands/*.md 与 scripts/setup.py** 里都写了本机代理端口 `127.0.0.1:7896`，清为 `127.0.0.1:<端口>` 占位。教训：**帮助文本/示例参数里的代理端口同样泄漏**；发布前 `grep -rInE "127\.0\.0\.1:[0-9]+"` 要覆盖 .py/.md/.json 全类型，且 **`.venv/` 用 `--exclude-dir` 排除后仍要扫 skill 脚本本体**。
+
+---
+
+## ★ [2026-08-10] git archive --format=tar 条目无前缀 → 解到子目录 staging 为空 → 空/残缺 zip (置信度: high, 命中: 1)
+
+**Rule**: `git archive --format=tar HEAD | tar -x -C <dir>` 的条目是顶层相对路径（无 `llm-sight/` 前缀）。若期望它们落在 `<dir>/llm-sight/`，会解到 `<dir>/` 根下——staging 子目录为空 → zip 只剩目录条目（v1 空 22B），v2 只剩手动拷进去的 models（丢全部 skill 文件）。
+**Wrong**: 假设 tar 自带前缀，解到 `STAGE_ROOT`，从 `STAGE_ROOT/llm-sight` 走 os.walk → 空
+**Right**: `mkdir -p $STAGE_ROOT/llm-sight && git archive | tar -x -C $STAGE_ROOT/llm-sight`，zip 条目再统一加 `llm-sight/` 前缀
+**Why**: git archive 的 tar 不含目录前缀（要前缀得用 `--prefix`）。staging 路径假设错 = 静默产出空/残缺 zip，只有列 zip 内容才暴露（`unzip -l` 抽查 SKILL.md / models 都在）。
+**检测**: 打包后 `unzip -l zip` 数文件数 + 抽查关键文件；两份 zip（v1/v2）都要看
 
 ---
 
