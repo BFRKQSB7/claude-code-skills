@@ -14,6 +14,16 @@
 
 ---
 
+## ★ [2026-08-10] Bash 工具下 isatty() True 但 stdin 立即 EOF → input() 崩溃 (置信度: high, 命中: 1)
+
+**Rule**: CLI 脚本询问用户时，别只信 `sys.stdin.isatty()`——自动化/管道环境（如 Claude Code 的 Bash 工具）可能返回 True 但 stdin 无数据，`input()` 抛 EOFError 崩溃。统一用兜底读行：`try: return input(p) except (EOFError,OSError): return ""`，空串按"用默认/直连/退出"处理。
+**Wrong**: `if sys.stdin.isatty(): s = input(...)` → Bash 工具下 isatty True 但 EOF → 崩
+**Right**: `_readline` 兜底；llm-sight 的 setup.py（ask_model/ask_proxy/菜单）与 ocr.py（_confirm）都用它
+**Why**: 交互性判断不能只看 isatty；自动化调用 stdin 可能被标为 TTY 却立即 EOF。
+**检测**: 脚本含 `input(` 且仅靠 `isatty()` 守卫 → 加 _readline 兜底
+
+---
+
 ## ★ [2026-08-05] 手动解压插件未注册 → /plugin 斜杠命令全部不可用 (置信度: high, 命中: 1)
 
 **Rule**: 手动解压到 `~/.claude/plugins/<name>/` 的插件，只配置 `statusLine` 只能显示 HUD，**斜杠命令（`/plugin:<cmd>`）不会出现**——命令只有把插件注册进插件系统才生效。`installed_plugins.json` 为空 = 幽灵安装。
