@@ -6,7 +6,7 @@
 
 ### Skill 质量
 - [ ] **Description 含触发器**: `"Use when [specific triggers]"` — 第一句功能，第二句触发词
-- [ ] **SKILL.md ≤ 100 行**: 超出则拆分到 `references/`，链接一层深
+- [ ] **SKILL.md ≤ 300 行**（skill-creator 允许 <500，本 skill 收紧到 300）: 超出则拆分到 `references/`，链接一层深
 - [ ] **无时间敏感信息**: 日期、版本号、价格等动态数据放外部文件
 - [ ] **术语一致 + 受控词汇表**: 每个 skill 定义 3-5 个核心术语；明确标记废弃词
 - [ ] **有具体示例**: 每个工作流至少一个 "Good vs Bad" 或代码示例
@@ -52,7 +52,7 @@ description: >
 
 ## 何时拆分文件
 
-- SKILL.md 超 100 行 → 拆内容到 `references/`
+- SKILL.md 超 300 行 → 拆内容到 `references/`
 - 新语言 → `references/lang/lessons-<lang>.md` + 更新 `lang/INDEX.md`
 - 新模式 → `references/patterns/lessons-pattern-<pat>.md` + 更新 `patterns/INDEX.md`
 - 不同领域 → `references/lessons-<domain>.md` + 更新 `references/INDEX.md`

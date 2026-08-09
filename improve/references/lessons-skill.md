@@ -145,9 +145,9 @@ git add -A && git commit -m "sync: improve <改动摘要>" && git push
 
 ---
 
-## ★ [2026-06-16] SKILL.md 超 100 行未拆分 → 上下文膨胀 (置信度: high, 命中: 1)
+## ★ [2026-06-16] SKILL.md 超 300 行未拆分 → 上下文膨胀 (置信度: high, 命中: 1)
 
-**Rule**: SKILL.md ≤ 100 行。超出 → 拆到 `references/`。引用一层深。
+**Rule**: SKILL.md ≤ 300 行（2026-08-10 从 100 放宽，参照 skill-creator 的 <500）。超出 → 拆到 `references/`。引用一层深。
 **Wrong**: 162 行单文件塞满工作流+清单+命令参考+格式指南 → agent 每次加载全部内容
 **Right**: 79 行核心工作流 + `references/` 按需加载
 **Why**: Progressive disclosure 是 AI 技能的标准架构。SKILL.md 只写 agent 每次必读的内容。
