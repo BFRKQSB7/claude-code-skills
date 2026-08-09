@@ -21,6 +21,16 @@
 
 ---
 
+## ★ [2026-08-10] cp 多源+多目标 → 全部拷进最后一个目录，产生垃圾文件 (置信度: high, 命中: 1)
+
+**Rule**: `cp f1 f2 f3 dest1 dest2` 中 cp 把最后一个目录参数当目标目录，所有源全拷进去；dest1 被忽略。同步多文件到多目标 → 分条 cp（`cp a X/Y.md && cp b c X/refs/`），别一条命令多源多目标。
+**Wrong**: `cp a.md b.md c.md X/Y.md X/refs/` → a.md 被拷成 `X/refs/a.md`，X/Y.md 没更新 → 备份仓库污染（improve/references/SKILL.md 垃圾文件）
+**Right**: 每条 cp 目标唯一；同步后 diff 逐文件核对 + `git status` 看新增文件位置
+**Why**: cp 的目录/文件目标判定只看最后一个参数。多目标人脑假设"一一对应"，实际全进最后目录 → 静默错位。
+**检测**: 同步后逐文件 `diff <(tr -d '\r' < src) <(tr -d '\r' < dst)`；`find dst -name "*.md"` 无意外新文件
+
+---
+
 ## ★★ [2026-08-08] 发布文件带本机个性化信息 → 用户名/绝对路径泄漏 (置信度: high, 命中: 2)
 
 **Rule**: 任何发布到 GitHub / 公开分享的文件，发布前必须扫描并清除**本机个性化信息**：OS 用户名、含用户名的绝对路径（`C:\Users\<用户名>\`、`/Users/<用户名>/`、`/home/<用户名>/`）、本机代理端口、hostname、密钥 token。发布源只允许**通用占位符**（`~`、`%USERPROFILE%`、`<用户名>`、运行时 `Path.home()`）。
