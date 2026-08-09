@@ -39,10 +39,20 @@
 
 ## ★★ [2026-08-10] 删 skill 只删主目录 → 斜杠命令里还在 (置信度: high, 命中: 2)
 
-**Rule**: 删除 skill 要「删干净」——除 `~/.claude/skills/<name>`，还要扫 `~/.agents/skills/`、`~/.cc-switch/skills/`、`~/claude-code-skills/`（聚合仓库）等**所有加载目录**，副本全删；再清 `settings.local.json` 的 `skillOverrides` 残留条目。真实 skill 名可能与用户叫法不同（ai-fix → `AI-install-and-fix`），搜目录名别搜口语名。
+**Rule**: 删除 skill 要「删干净」——除 `~/.claude/skills/<name>`，还要扫 `~/.agents/skills/`、`~/.cc-switch/skills/` 等**本机加载目录**，副本全删；再清 `settings.local.json` 的 `skillOverrides` 残留条目。**云端/发布仓库默认不删**（见下条）。真实 skill 名可能与用户叫法不同（ai-fix → `AI-install-and-fix`），搜目录名别搜口语名。
 **Wrong**: 只删 `~/.claude/skills/pinokio` → 斜杠命令还在：`.agents` / `.cc-switch` / `claude-code-skills` 各有一份拷贝继续被加载。
-**Right**: `find ~/.claude ~/.agents ~/.cc-switch ~/claude-code-skills -maxdepth 3 -type d -iname "<skill名>"` → 全删 → 删 `skillOverrides` 条目 → 重启会话验证 `/` 里消失。
+**Right**: `find ~/.claude ~/.agents ~/.cc-switch -maxdepth 3 -type d -iname "<skill名>"` → 全删（**不含云端克隆**）→ 删 `skillOverrides` 条目 → 重启会话验证 `/` 里消失。
 **Why**: skill 会被多个加载目录复制加载，主目录删 ≠ 删干净；override 残留条目指向尸体，纯噪音。叫法差异会让搜索失败（搜「ai-fix」找不到 `AI-install-and-fix`）。
-**检测**: 删除后 find 所有加载目录零命中 + `grep "<skill名>" settings*.json` 零残留。
+**检测**: 删除后 find 本机加载目录（.claude/.agents/.cc-switch）零命中 + `grep "<skill名>" settings*.json` 零残留。
 
 **再次**: 2026-08-10 — 同会话连删 `AI-install-and-fix`、`gepeto`、`pinokio` 三个 skill，每个都有 `.agents`+`.cc-switch`（+聚合仓库）副本，只删主目录必然复发。
+
+---
+
+## ★ [2026-08-10] 删 skill 连云端一起删 → 越界 (置信度: high, 命中: 1)
+
+**Rule**: 删除 skill 默认**只删本机加载目录**（`~/.claude/skills`、`~/.agents/skills`、`~/.cc-switch/skills`）；云端/发布仓库（GitHub skill 仓库、`~/claude-code-skills` 克隆）默认保留。只有用户明说「连云端一起删 / push 删除」才 commit+push 删除。
+**Wrong**: 用户说「pinokio 从本机删掉」→ 我把删除 commit+push 到云端 `claude-code-skills` → 用户纠正「云端 skill 除特殊说明默认不删除」。
+**Right**: 删本机加载目录即可；git 状态出现未授权删除时 `git checkout -- <path>` 恢复；已 push 则开 restore 提交还回（禁 force-push）。
+**Why**: 云端仓库是 skill 的备份/发布源，本机删除 ≠ 授权云端删除。删除影响所有克隆与协作者，默认保守，按用户明示的范围执行。
+**检测**: push 前 `git status` / `git diff --cached --stat` 只含授权改动，无 skill 文件删除。
