@@ -109,7 +109,7 @@
 
 ---
 
-## ★★★ 提交身份错配 → 贡献归属陌生人 `permanent` (since: 2026-08-05, last_hit: 2026-08-07)
+## ★★★ 提交身份错配 → 贡献归属陌生人 `permanent` (since: 2026-08-05, last_hit: 2026-08-09)
 
 **Rule**: 任何 git commit 前，必须确认提交身份正确 — commit 前 `git config user.email`、commit 后 `git log -1 --format='%an <%ae>'` 复核。发布流程 Phase 2 已加「提交身份」门禁。
 **Why**: git 提交邮箱会被 GitHub 关联到对应账号。身份错配 = 整个仓库的贡献被归属给陌生人（不是协作者，只是贡献显示错人），且协作者列表不会提示 — 只能靠 `git filter-branch --env-filter` 重写历史 + `git push --force` 修正，属于破坏性操作。
@@ -119,3 +119,4 @@
 **防御**: 校验必须是**断言**（打印后逐字比对，`printf` 出来不等于通过）。`git config user.email` 可能被**仓库级 `--local` 配置覆盖**——先 `git config --local --get user.email`，再 `git config user.email`，两个都须等于 `226671264+BFRKQSB7@users.noreply.github.com`。备份/同步仓库的提交同样受此门禁约束。
 **再次**: 2026-08-05 — balance-hud(11) + kakuyomu-scraper(3) + claude-code-skills(6) 提交全部误用 `nyro@users.noreply.github.com`，贡献归属陌生账号 nyro(显示名 Florian)，已重写历史修正
 **再次**: 2026-08-05 — claude-code-skills 本地仓库残留 `--local user.email=nyro@users.noreply.github.com` 覆盖；sync 提交打印出错值却未断言拦截即提交+推送，已 reset 到正确基线重推、错误身份提交从远程清除
+**再次**: 2026-08-09 — 备份 skill（minimax-h3 → claude-code-skills、html-guide-skill）时误用 `BFRKQSB7@users.noreply.github.com`（少 `226671264+` 数字前缀）；发布 ai-prompt-supermarket 时已用正确邮箱 `226671264+BFRKQSB7@users.noreply.github.com` 并加 `git log -1 --format='%an <%ae>'` 断言通过。两个备份仓的错误身份提交**待用户决定**是否 `git filter-branch` 重写+强推。教训：凡 git commit 必 `git config --local --get user.email` + `git config user.email` 双查并断言，别用 `-c user.email` 简写。

@@ -389,3 +389,18 @@ docs/
 3. raw.githubusercontent.com 只作辅助，出现「同批文件新旧不一」先怀疑 CDN 缓存，别怀疑自己的推送
 **Why**: raw CDN 边缘缓存 TTL 不同，刚 push 的文件可能在部分区域/文件上仍返回旧版；GitHub API contents 直读仓库真实 blob，无缓存层。
 **检测**: 验证命令优先 `gh api repos/{owner}/{repo}/contents/{path}?ref={branch}` 或 `git ls-remote`；raw 命中原先依赖的标记行不可作为「推送失败」的唯一依据。
+
+---
+
+## ★ [2026-08-09] 单文件 HTML 工具 GitHub Pages 托管 (置信度: high, 命中: 1)
+
+**Rule**: 单文件 HTML 工具发布后可用 GitHub Pages 免费托管在线版。步骤：
+1. 文件改名 **`index.html`**（Pages 根路径默认页，否则访问根 URL 是 404）
+2. `gh api -X POST repos/{owner}/{repo}/pages -f 'source[branch]=main' -f 'source[path]=/'` 开启
+3. **Pages 构建是异步的**：开启后 ~40 秒内访问返回 404 属正常，别误判失败
+4. 验证 `curl -s -o /dev/null -w "%{http_code}" https://{owner}.github.io/{repo}/` 得 `200`
+
+**Wrong**: 用原名（非 index.html）托管 → 根路径 404；开启后立即 `curl` → 404 误判"没开成功"
+**Right**: index.html + gh api 开启 + 轮询到 200（`for i in $(seq 1 6); do sleep 20; curl ...; [ 200 ] && break; done`）
+**Why**: GitHub Pages 只把 `index.html` 作为根路径默认文档；Pages 首次构建需时间（Actions 或 legacy 构建），期间站点未就绪。
+**关联**: 发布验证见上条（CDN 缓存）；提交身份见 lessons-critical「提交身份错配」。
