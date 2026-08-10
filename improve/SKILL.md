@@ -50,7 +50,7 @@ user-invocable: true
 ## Subcommands
 | 输入 | 行为 |
 |------|------|
-| `/improve` | 询问：学习？创建？更新？发布？反省？ |
+| `/improve`（无有效提示词） | 默认=提醒加载 improve skill：进入就绪态（Phase 1 教训已加载），**不反问**子命令；带明确词才进对应流程 |
 | `/improve learn <topic\|url>` | 搜 GitHub/web 最佳实践并吸收 |
 | `/improve create <name>` | 创建项目骨架（语言检测 → 模板） |
 | `/improve update` | 同步版本号 + grep 旧版本零残留 |
