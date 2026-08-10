@@ -80,6 +80,7 @@ user-invocable: true
 ## Phase 3: 反省归档
 提炼（场景→现象→根因→修复→泛化）→ 按语言/模式/领域归档 → 合并同根因升优先级 / 30 天休眠 → **同步对应 INDEX.md 教训数**
 **Critical 维护**: ★★★ → critical 常加载 → 30 天未命中降级 → 复入标记 `permanent`
+**自动推送**: 反省归档完成 → 提交身份断言（`226671264+BFRKQSB7@users.noreply.github.com`）→ 发布克隆 commit + push（**默认执行，不再询问**，2026-08-10 用户明示）
 
 ## Review Checklist
 - [ ] Phase 0: 搜过现成方案？有就搬

@@ -38,17 +38,18 @@
 
 ---
 
-## ★ [2026-08-01] 修改 improve skill 后未同步 GitHub 备份 → 备份过期 (置信度: high, 命中: 1)
+## ★★ [2026-08-01] 修改 improve skill 后未同步 GitHub 备份 → 备份过期 (置信度: high, 命中: 2)
 
-**Rule**: 任何修改 improve skill 文件（SKILL.md / lessons / INDEX / 删文件）后，Phase 3 反省时把改动同步到 GitHub 备份 repo `BFRKQSB7/claude-code-skills` 的 `improve/` 并 push
+**Rule**: 任何修改 improve skill 文件（SKILL.md / lessons / INDEX / 删文件）后，Phase 3 反省时把改动同步到 GitHub 备份 repo `BFRKQSB7/claude-code-skills` 的 `improve/` 并 push。**反省完默认自动推送，不再询问用户**（2026-08-10 用户明示）
 **Why**: 备份 repo 是 `~/.claude/skills/` 的 self-use 备份。不同步则多会话后备份严重过期（本会话发现备份仍含已删除的 `agent-brief.md` / `handoff.md` / `references/lessons-learned.md`）
-**Right**: 同步流程（备份 clone 在 `~/claude-code-skills`，已设本地代理）:
+**Right**: 同步流程（备份 clone 在 `~/Desktop/AI/Claude/clone/claude-code-skills`，已设本地代理）:
 ```bash
-cd ~/claude-code-skills && git pull
+cd ~/Desktop/AI/Claude/clone/claude-code-skills && git pull
 rsync -a --delete "~/.claude/skills/improve/" improve/
 git add -A && git commit -m "sync: improve <改动摘要>" && git push
 ```
-**检测**: 修改后 `git -C ~/claude-code-skills status --short improve/` 无输出 = 已同步
+**检测**: 修改后 `git -C ~/Desktop/AI/Claude/clone/claude-code-skills status --short improve/` 无输出 = 已同步
+**再次**: 2026-08-10 — 反省归档后教训+路径修正 3 个文件滞留 clone 未提交，等用户开口才推。用户明确「以后默认反省完自动推送」→ 反省完 = 提交身份断言 + commit + push 一气呵成
 **泛化**: 任何"自修改型"skill（会更新自身教训文件）都要内置备份步骤，否则知识库与备份分叉。
 
 ---
@@ -444,4 +445,14 @@ docs/
 
 **泛化**: 调研外部 skill（如 browser-use）时，把候选能力逐条映射成本地 skill 的「机制 → 工具/绕行」条目落盘（如 `references/mechanisms.md`），而不是只总结概念。概念会蒸发，映射表能直接进参考文件。
 **核心**: 外部借鉴的落地单位是「可执行的映射条目」，不是「学到了什么」。架构不同也没关系——搬做法不搬管道（browser-use 是 CDP daemon，本地是 MCP，合并的是 When-Not-to-Use 守卫 / 诊断优先 / 登录墙策略 / 按机制拆参考，不是它的 CDP 代码）。
+
+---
+
+## ★ [2026-08-10] 发布克隆散落多目录 → 挪动后路径引用漏改 (置信度: high, 命中: 1)
+
+**Rule**: 发布克隆集中一个目录（`~/Desktop/AI/Claude/clone/`）；挪动后全量更新硬编码旧路径的引用：项目 `settings.local.json` 权限白名单、记忆文件、skill 内部同步流程（`cd ~/claude-code-skills` 类命令）。
+**Wrong**: 克隆散落 `~/claude-code-skills`、`~/html-guide-skill`、项目根 3 处 → 迁入 `clone/` 后漏改 `lessons-skill.md` 的 `cd ~/claude-code-skills` 同步命令 → 未来同步在失效路径失败
+**Right**: 统一放 `clone/`；挪动后 `grep -rn "<旧路径>"` 全量扫（settings/记忆/skill 内部）逐处改
+**Why**: 路径引用埋在 3 层（权限配置/记忆文档/技能内部流程），只挪目录不追引用 = 静默断链（2026-08-10 实测抓到 3 处：settings.local.json Read 白名单、memory 两文件、lessons-skill.md sync 命令）
+**检测**: 挪动后全盘 grep 旧路径零命中（除历史教训叙述/缓存）
 
