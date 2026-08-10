@@ -34,7 +34,7 @@
 ## ★★ [2026-08-08] 发布文件带本机个性化信息 → 用户名/绝对路径泄漏 (置信度: high, 命中: 2)
 
 **Rule**: 任何发布到 GitHub / 公开分享的文件，发布前必须扫描并清除**本机个性化信息**：OS 用户名、含用户名的绝对路径（`C:\Users\<用户名>\`、`/Users/<用户名>/`、`/home/<用户名>/`）、本机代理端口、hostname、密钥 token。发布源只允许**通用占位符**（`~`、`%USERPROFILE%`、`<用户名>`、运行时 `Path.home()`）。
-**Wrong**: html-guide README / Release 正文带 `C:\Users\NYRO\...`（泄漏本机用户名）；kakuyomu-scraper `OUT_DIR` 硬编码 `C:\Users\NYRO\Desktop\1`（功能 + 泄漏）；improve lessons、balance-hud README 同样带本机路径。用户点名「发布的文件不能带本机个性化信息」。
+**Wrong**: html-guide README / Release 正文带 `C:\Users\<用户名>\...`（泄漏本机用户名）；kakuyomu-scraper `OUT_DIR` 硬编码 `C:\Users\<用户名>\Desktop\1`（功能 + 泄漏）；improve lessons、balance-hud README 同样带本机路径。用户点名「发布的文件不能带本机个性化信息」。
 **Right**:
 1. 发布前扫描：`grep -rIn "C:\\\\Users\\\\\|/Users/\|/home/\|<OS用户名>\|<本机端口>" --exclude-dir=.git .`
 2. 路径一律用通用形式：`~` / `%USERPROFILE%` / `Path.home()`（运行时动态取当前用户，发布文件零泄漏）
@@ -43,8 +43,8 @@
 **Why**: 公开仓库任何人可见。`C:\Users\<用户名>\` 直接暴露本机账户名，可被社工；硬编码路径还会让脚本在别人机器上失效。
 **检测**: 发布后 `grep -rIn "<OS用户名>" .` 零残留 + `gh release view <新> --json body | grep "<OS用户名>"` 零残留
 
-**再次**: 2026-08-10 — html-guide 技能介绍页（公开 GitHub Pages）安装示例写死本机代理端口 `127.0.0.1:7896`，用户提醒后 v2.2.4 清为 `127.0.0.1:&lt;代理端口&gt;` 占位并重发布。教训：**代理端口也属于本机个性化信息**，且会跟着 Pages 一直公开；发公开页前 `grep -n "127.0.0.1:[0-9]" index.html` 也要零残留。
-**再次**: 2026-08-10 — llm-sight 发布前扫描抓到 **commands/*.md 与 scripts/setup.py** 里都写了本机代理端口 `127.0.0.1:7896`，清为 `127.0.0.1:<端口>` 占位。教训：**帮助文本/示例参数里的代理端口同样泄漏**；发布前 `grep -rInE "127\.0\.0\.1:[0-9]+"` 要覆盖 .py/.md/.json 全类型，且 **`.venv/` 用 `--exclude-dir` 排除后仍要扫 skill 脚本本体**。
+**再次**: 2026-08-10 — html-guide 技能介绍页（公开 GitHub Pages）安装示例写死本机代理端口 `127.0.0.1:<代理端口>`，用户提醒后 v2.2.4 清为 `127.0.0.1:&lt;代理端口&gt;` 占位并重发布。教训：**代理端口也属于本机个性化信息**，且会跟着 Pages 一直公开；发公开页前 `grep -n "127.0.0.1:[0-9]" index.html` 也要零残留。
+**再次**: 2026-08-10 — llm-sight 发布前扫描抓到 **commands/*.md 与 scripts/setup.py** 里都写了本机代理端口 `127.0.0.1:<代理端口>`，清为 `127.0.0.1:<端口>` 占位。教训：**帮助文本/示例参数里的代理端口同样泄漏**；发布前 `grep -rInE "127\.0\.0\.1:[0-9]+"` 要覆盖 .py/.md/.json 全类型，且 **`.venv/` 用 `--exclude-dir` 排除后仍要扫 skill 脚本本体**。
 
 ---
 

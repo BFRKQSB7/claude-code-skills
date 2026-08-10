@@ -379,7 +379,7 @@ docs/
 ### ★★ [2026-08-05] skill 发布仓库 README 独立维护 → 改 skill 不同步 README (置信度: high, 命中: 3)
 
 **Rule**: skill 发布仓库的 `README.md` **只在 repo 里维护**（不在 `~/.claude/skills/<skill>/` 加载目录里）。发布流程「copy 加载目录 → repo」**不会带 README**——每次改 skill 后要单独检查/同步 README，否则 README 停在旧描述。
-**Wrong**: v2.0.4 把代理端口解耦到 user-config.md，只改了 search-guide.md / SKILL.md；README 目录结构注释仍写 `curl -x 127.0.0.1:7896`。用户看到 GitHub README 还有 7896 才暴露。
+**Wrong**: v2.0.4 把代理端口解耦到 user-config.md，只改了 search-guide.md / SKILL.md；README 目录结构注释仍写 `curl -x 127.0.0.1:<代理端口>`。用户看到 GitHub README 还有 <代理端口> 才暴露。
 **Right**:
 1. 发布 skill 时，克隆仓库后先 `grep -rn "旧端口/旧功能名" README.md` 检查 README 是否需同步
 2. README 最容易过期的三处：**功能表 / 目录结构 / 安装说明**

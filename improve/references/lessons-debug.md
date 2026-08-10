@@ -59,7 +59,7 @@
 ## ★ [2026-08-01] 网络失败先验代理端口存活，再判网络故障 (置信度: high, 命中: 1)
 
 **场景**: `git clone` / `gh repo clone` 报 `Failed to connect to github.com port 443 via 127.0.0.1: Could not connect to server`
-**根因**: `git config --global http.proxy` 指向已停止的本地代理端口 (7897)，实际 7896 存活且直连可通 (curl 200)
+**根因**: `git config --global http.proxy` 指向已停止的本地代理端口 (<旧代理端口>)，实际 <存活端口> 存活且直连可通 (curl 200)
 **修复**: `netstat -ano | grep LISTENING | grep 127.0.0.1:789x` 找存活端口 → `curl -x http://127.0.0.1:<port> https://api.github.com` 验活 → `git -c http.proxy=http://127.0.0.1:<port> clone ...`；同时测直连 `curl -s -o /dev/null -w "%{http_code}" https://api.github.com`
 **Why**: Windows 本地代理/VPN 工具端口会变（重启后占新端口），全局 git 代理配置陈旧；gh CLI 走 `HTTPS_PROXY` env，git 走 `http.proxy` config，两套不共享
 **泛化**: 任何"通过代理的网络操作失败"：第一步验证代理端口是否真活 + 试直连，再谈网络故障。测出存活端口后临时 `-c` 覆盖比改全局配置更安全。
@@ -103,3 +103,12 @@
 **Wrong**: 前次测试把 mock 句柄存进 IndexedDB + localStorage 设 autoSaveOn → 下次运行时 favHandle 是空对象（truthy 无方法）→ 跳过选文件、方法不被调用、开关行为反转，全被误判成真 bug，白调试多轮。
 **Right**: 测试前置状态（清 localStorage 相关键 + IndexedDB + 相关全局变量），测完还原；现象"方法没被调 / 开关反转 / 写入为空" → 先查残留。
 **Why**: 浏览器页面状态比想象持久得多。调试时先隔离"干净环境"再谈代码逻辑。
+
+---
+
+## ★ [2026-08-11] LF 行尾 .bat + UTF-8 多字节字符 → cmd 误解析执行碎片 (置信度: high, 命中: 1)
+
+**Rule**: Windows `.bat`/`.cmd` 用 CRLF 行尾 + 纯 ASCII。LF 行尾文件里出现 UTF-8 多字节字符（em-dash `—` 等）→ cmd 批处理解析器把字符后的换行认错，把某字母碎片当命令执行，报 `'m' 不是内部或外部命令` 之类假错（stderr，功能不受影响）。
+**Wrong**: login.bat 是 LF 行尾、注释含 em-dash `—` → 双击快捷方式跑登录时 stderr 报两次 `'m' 不是内部或外部命令`
+**Right**: 写/改 .bat 后查行尾与字符集：LF + 非 ASCII → 转 CRLF + 多字节换 ASCII（`—`→`--`）。PowerShell `.ps1` 无此问题（不走 cmd 批处理解析器）。
+**检测**: `python` 数 `\r\n`/`\n`；复现 `subprocess.run(['cmd','/c',bat], capture_output=True)` 看 stderr。A/B：LF+ASCII 无错 / LF+em-dash 报错 / CRLF+em-dash 无错。
