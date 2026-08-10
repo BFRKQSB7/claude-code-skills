@@ -87,3 +87,12 @@
 **Right**: 会话收尾 `ls` 目录逐项分类：临时→删，缓存→留（自动再生），正式→留；大体积工具放正式位置（E:\AI\ai-image），项目目录不留副本
 **Why**: 临时产物对后续会话零价值，还干扰「哪是正式产出」的判断；多会话各留一份 → 目录膨胀（2026-08-10 清理项目目录，垃圾项占大头）
 **检测**: 收尾 `ls` 目录按「正式/缓存/临时」分类，临时项零残留
+
+---
+
+## ★ [2026-08-11] Write 工具 Windows 字面路径 vs Bash /tmp → 误建盘符根目录 (置信度: high, 命中: 1)
+
+**Rule**: Git Bash `/tmp` = `C:/Users/<user>/AppData/Local/Temp`（`pwd -W` / `cygpath -w` 可查），但 Write/Edit 工具用 Windows 字面路径。给 Bash 产物写文件前先 `pwd -W` 确认映射，写完 `ls` 核对落点。
+**Wrong**: 克隆在 `/tmp/aps-clone`（=AppData\Local\Temp），Write 写到 `C:\tmp\aps-clone` → 两处副本 + 盘符根多出垃圾目录。
+**Right**: 先 `pwd -W` 取真实 Windows 路径再 Write；或 Bash `cp` 落地。写错路径后 `rm -rf` 清掉误建目录。
+**Why**: Bash 与 Write 工具路径语义不同（/tmp 映射 vs 字面盘符）。跨工具写文件是路径错位重灾区。

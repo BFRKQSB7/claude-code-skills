@@ -74,3 +74,12 @@
 **修复**: `echo 'export PATH="$PATH:/c/Program Files/GitHub CLI"' >> ~/.bashrc`
 **泛化**: Windows 开发环境三套 PATH 体系（CMD/PowerShell/Git Bash），winget/scoop/choco 安装的 CLI 工具不一定三者都覆盖。安装后先 `which <cmd>` 验证，失败就加 bashrc。
 **关键词**: `winget` `scoop` `choco` `Git Bash` `PATH` `command not found`
+
+---
+
+## ★ [2026-08-11] IndexedDB 恢复的句柄先校验方法再沿用 (置信度: high, 命中: 1)
+
+**场景**: 自动保存功能从 IndexedDB 恢复 FileSystemFileHandle。前次存的是 mock（方法不可枚举 → 结构化克隆后变空对象 `{}`），恢复后 truthy 但无方法 → 跳过选文件、`createWritable` 抛错被吞、静默失败。
+**修复**: 恢复后校验 `if (h && typeof h.createWritable==='function') favHandle=h;` 否则丢弃重新选。生产只存真 `FileSystemFileHandle`（可结构化克隆）。
+**泛化**: 持久化的东西会过期/损坏/降级。恢复的对象 truthy ≠ 可用，用前校验关键方法存在；持久化失败不阻塞主流程。
+**关键词**: `IndexedDB` `句柄` `校验` `结构化克隆` `FileSystemFileHandle` `恢复` `favHandle`

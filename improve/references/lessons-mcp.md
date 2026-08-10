@@ -180,3 +180,12 @@ printf "9222\n/devtools/browser/<current-uuid>\n" > "%LOCALAPPDATA%\Google\Chrom
 **Right**: 降级链 = 浏览器导航 github.com → embeddedData 递归找 `rawLines`（路径随 GitHub 改版漂移，必须递归 walk 而非硬编码路径）。GitHub 未登录 search 也限流（"Too many requests"）→ 直接导航已知仓库路径，别用站内搜索。
 **检测**: evaluate_script 返回 `{found:true, full}` 且 `full.length` 与文件预期规模相符。
 
+---
+
+## ★ [2026-08-11] evaluate_script 传 async 函数直接 return → "Promise was collected" (置信度: high, 命中: 1)
+
+**Rule**: chrome-devtools `evaluate_script` 里 async 函数直接 `return {...}` → 报 `Protocol error (Runtime.callFunctionOn): Promise was collected` 或 undefined。改用**两步法**：第一步 fire-and-forget 的 IIFE 把结果塞进 `window.__x`，第二步 `() => window.__x` 读回。
+**Wrong**: `async () => ({ a: 1 })` 直接返回对象 → 拿不到
+**Right**: `() => { (async ()=>{ window.__x = await ...; })(); return 'started'; }` → 再 `() => window.__x`
+**Why**: 该 MCP 的 evaluate 不 await async promise，promise 被 GC。两步法本会话验证 5+ 次可靠。测完删全局 + 用唯一键防污染。
+

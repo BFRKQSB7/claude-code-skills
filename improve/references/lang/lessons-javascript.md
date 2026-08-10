@@ -180,3 +180,13 @@
 **Why**: 一个 `querySelector` 的 SyntaxError 让整页语法高亮+复制+Tabs 全灭，4 轮评测用户连续两轮反馈"无语法高亮"才定位到根因——JS 静默失败没有错误提示，只能靠渲染验证兜底。
 **Where**: 2026-08 html-guide skill 骨架 — `it.a.hash` 中文 id percent-encode 导致 buildToc 抛错，高亮/复制/Tab 全部未跑（评测迭代 2→3 修复）。
 **Fix**: `textContent` 替代 `innerText`；目录存元素引用替代 querySelector 反查；SKILL.md 内置 headless 验证步骤。
+
+---
+
+## ★ [2026-08-11] 展示值（中文/覆盖名）取自展示层，别用原始数据查找 (置信度: high, 命中: 1)
+
+**Rule**: 界面要显示的值（本地化/中文/覆盖显示名）应从**实际渲染该值的地方**取，别从原始数据集反查。两处展示逻辑必须共用同一解析函数，否则分叉。
+**Wrong**: 标签工具 ★收藏 用 `fullMap.has(en)?fullMap[1]:en` 解析中文，但分类用 `CURATED_ZH[en] || fullMap[1] || en`。部分词只在精选分类的 CURATED_ZH 里、不在全量库（如 masterpiece）→ 收藏里中文消失显示英文。
+**Right**: 解析函数统一：优先"分类展示值表"（构建时遍历所有分类已展示的 zh），再原始库，最后英文兜底；键做下划线↔空格归一化（同一词两处存法不同）。
+**Why**: 展示层有覆盖/精选逻辑，原始数据查不到 = 展示分叉。键的两种写法（`best_quality` vs `best quality`）也要归一，否则查找失配。
+**Where**: 2026-08-11 Danbooru 标签超市 — 收藏分类中文缺失，根因 CURATED_ZH 词不在全量库 + 下划线/空格键失配。修复：`favZhMap`（分类展示值表）+ `favZh()` 统一解析。

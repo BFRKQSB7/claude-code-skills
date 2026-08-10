@@ -7,7 +7,7 @@
 
 | Pattern | 文件 | 教训数 | 覆盖 |
 |---------|------|--------|------|
-| Async | [lessons-pattern-async.md](lessons-pattern-async.md) | 4 | 超时/竞态/限流/顺序假设 + 5语言差异表 |
+| Async | [lessons-pattern-async.md](lessons-pattern-async.md) | 5 | 超时/竞态/限流/顺序假设/IndexedDB promise永不settle + 5语言差异表 |
 | Loop | [lessons-pattern-loop.md](lessons-pattern-loop.md) | 5 | 修改迭代对象/闭包/进度/O(N²)/querySelector 只改第一个 |
 | Error | [lessons-pattern-error.md](lessons-pattern-error.md) | 4 | 吞错误/无上下文/异常链断裂/类型太粗 + 5语言差异表 |
 | I/O | [lessons-pattern-io.md](lessons-pattern-io.md) | 6 | 资源泄漏/外部输入校验/大文件OOM/编码假设 + 5语言差异表 |

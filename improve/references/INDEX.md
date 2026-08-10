@@ -8,13 +8,13 @@
 | Domain | 文件 | 教训数 | 一句话 |
 |--------|------|--------|--------|
 | Process | [lessons-process.md](lessons-process.md) | 4 | 后台进程/锁/启动竞态/daemon hook async |
-| Cleanup | [lessons-cleanup.md](lessons-cleanup.md) | 8 | 变更后全局 grep 防引用断裂 / 衍生项目旧仓库引用 / 发布文件禁带本机个性化信息 / 删 skill 要删干净（多加载目录副本 + override 残留）/ 删 skill 云端默认不删 / 会话临时产物用完即删 |
-| State | [lessons-state.md](lessons-state.md) | 8 | API 采样/跨平台 CLI/实时性/statusLine 被重写/凭据回退/残留进程污染/模型 env 重映射 |
+| Cleanup | [lessons-cleanup.md](lessons-cleanup.md) | 9 | 变更后全局 grep 防引用断裂 / 衍生项目旧仓库引用 / 发布文件禁带本机个性化信息 / 删 skill 要删干净（多加载目录副本 + override 残留）/ 删 skill 云端默认不删 / 会话临时产物用完即删 / Write工具路径vs Bash /tmp |
+| State | [lessons-state.md](lessons-state.md) | 9 | API 采样/跨平台 CLI/实时性/statusLine 被重写/凭据回退/残留进程污染/模型 env 重映射/IndexedDB恢复句柄校验 |
 | Skill | [lessons-skill.md](lessons-skill.md) | 33 | 发布流程/教训审查/SKILL.md 架构/术语/命名/衍生项目文档/多语言 README/纯外语 README 必补中文（文件切换版）/代理指令禁弹窗/断言验运行时/迭代基线优化/手动插件注册/独立仓库确认/运行目录与 diff 克隆分离/raw CDN 缓存验证/单文件 HTML GitHub Pages 托管/外部 skill 合并映射表 |
-| Debug | [lessons-debug.md](lessons-debug.md) | 9 | 反馈循环优先/调试日志标记/多假设锚定/代理端口验活/行尾差异/实测当前行为/spawnSync 模拟 stdin |
+| Debug | [lessons-debug.md](lessons-debug.md) | 10 | 反馈循环优先/调试日志标记/多假设锚定/代理端口验活/行尾差异/实测当前行为/spawnSync 模拟 stdin/页面测试残留状态 |
 | **GPU** | **[lessons-gpu.md](lessons-gpu.md)** | **4** | **Blackwell 上 paddle cu126 不可用走 onnxruntime+DirectML / 硬件探测独立于加速包（删模块可重装）/ ctypes D3D12 坑用 D3D11 / ORT-DML 同名互斥可卸载切换** |
 | Security | [lessons-security.md](lessons-security.md) | 8 | 注入/凭证泄露/供应链/反序列化/CORS/加密 |
-| **MCP** | **[lessons-mcp.md](lessons-mcp.md)** | **8** | **自起 Chrome+--browserUrl 连接/DevToolsActivePort hack 备选/WebFetch 拦截/WebSearch 技巧/截图溢出/浏览器 vs WebFetch/读 GitHub 文件全文(embeddedData.rawLines)** |
+| **MCP** | **[lessons-mcp.md](lessons-mcp.md)** | **9** | **自起 Chrome+--browserUrl 连接/DevToolsActivePort hack 备选/WebFetch 拦截/WebSearch 技巧/截图溢出/浏览器 vs WebFetch/读 GitHub 文件全文(embeddedData.rawLines)/evaluate_script 异步两步法** |
 
 ## 按需加载决策树
 

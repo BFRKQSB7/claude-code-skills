@@ -42,3 +42,12 @@
 | GC 取消 task | `create_task` 不存引用 | Promise 不取消 | drop Future = 取消 | goroutine 不被 GC 取消 | N/A |
 | 默认超时 | 无 | 无（需 AbortController） | 无 | 无 | `timeout` 命令可用 |
 | 数据竞争检测 | 需 `threading` 或 mypy | 单线程无真数据竞争 | 编译时保证 | `-race` flag | N/A |
+
+---
+
+## ★ [2026-08-11] IndexedDB put 不可克隆值 → onsuccess 内同步异常 → Promise 永不 settle (置信度: high, 命中: 1)
+
+**Rule**: `put()` 含函数/不可结构化克隆的对象进 IndexedDB → `put` 在 onsuccess 回调里同步抛 `DataCloneError`，但 Promise executor 已返回 → `res/rej` 永不调用 → `await` **永久挂起**，try/catch 也抓不到（promise 不 reject）。持久化/副作用操作别阻塞主流程：fire-and-forget `.catch(()=>{})`。
+**Wrong**: `await favDbSet(handle)` 依赖它 settle → 挂死。真实 `FileSystemFileHandle` 可结构化克隆（官方用法），但测试 mock（普通函数方法）不可克隆 → 假挂起。
+**Right**: `favDbSet(handle).catch(()=>{})` 尽力而为，不 await；await 前确认 promise 必 settle。
+**Why**: JS 事件处理器（onsuccess）里的同步异常不会 reject 外层 promise，异常变未捕获、promise 静默悬空。
