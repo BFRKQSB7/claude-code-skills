@@ -96,3 +96,10 @@
 **Wrong**: 克隆在 `/tmp/aps-clone`（=AppData\Local\Temp），Write 写到 `C:\tmp\aps-clone` → 两处副本 + 盘符根多出垃圾目录。
 **Right**: 先 `pwd -W` 取真实 Windows 路径再 Write；或 Bash `cp` 落地。写错路径后 `rm -rf` 清掉误建目录。
 **Why**: Bash 与 Write 工具路径语义不同（/tmp 映射 vs 字面盘符）。跨工具写文件是路径错位重灾区。
+
+---
+
+## ★ [2026-08-11] 发布仓库不留旧版备份文件，git 历史即备份 (命中: 1)
+
+**泛化**: 发布仓库只放当前发布物；「旧版备份」由 git tag/历史承担，不留 index_old.html 式冗余文件（14MB 副本 + README/Release 残留引用 + 用户困惑哪个是正式版）。
+**核心**: 删除已发布备份文件时必须连带 grep 清理 README/Release 正文里的当前态引用；历史变更日志条目属史实，保留。
