@@ -190,3 +190,13 @@
 **Right**: 统一多层解析链：CURATED_ZH > FULL_TAGS/fullMap > 收藏(favZh)；键做下划线↔空格归一化；构建一次 `matchMap` 供所有匹配入口复用。
 **Why**: 展示层有覆盖/精选逻辑，原始数据查不到 = 分叉。同一词两种存法（`best_quality`/`best quality`）不归一也失配。**新增任何识别/匹配逻辑，先找已有解析函数复用，别自建更窄的查询**。
 **Where**: 2026-08-11 Danbooru 标签超市 — ①收藏中文缺失 ②回填识别漏 CURATED_ZH 词。修复：favZhMap/favZh 统一解析 + matchMap。
+
+---
+
+## ★ [2026-08-11] File System Access API 不暴露真实路径：无 path/getParent，目录句柄只能 showDirectoryPicker 取 (置信度: high, 命中: 1)
+
+**Rule**: 浏览器拿不到文件/文件夹的绝对路径（含盘符）——`File`/`FileSystemFileHandle`/`FileSystemDirectoryHandle` 原型均无 `path`，`getParent()` 未实现。要实现「重选从上次位置开始」，唯一方案是存**目录句柄** + `showDirectoryPicker({startIn: lastDirHandle})`；路径展示只能给 `dirHandle.name + ' / ' + fileName`。
+**Wrong**: 假设能 `favHandle.getParent()` 或 `file.path` 拿到带盘符路径 → Chrome 实测 `File.prototype` 无 path、两个 handle 原型均无 getParent。
+**Right**: 自动保存改目录句柄模式：`showDirectoryPicker` 选文件夹 → 文件固定 `dtag_fav.json`（`getFileHandle(name,{create:true})`）→ 存 dirHandle，重选时 `startIn: dirHandle`；路径显示「文件夹名 / 文件名」。盘符只能用户手动填。
+**Why**: File System Access API 安全模型故意隐藏绝对路径，parent 访问在 Chrome 未实现。用户要求「显示完整路径含盘符」时先测原型再定方案，别假设 API 提供。
+**Where**: 2026-08-11 标签超市 v2.5.0 自动保存增强。实测：`FileSystemFileHandle.prototype` = [createWritable,getFile,move]，目录 handle 无 getParent。
