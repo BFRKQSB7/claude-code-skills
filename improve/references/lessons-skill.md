@@ -127,13 +127,14 @@ git add -A && git commit -m "sync: improve <改动摘要>" && git push
 
 ---
 
-## ★ [2026-06-16] 每次从零造轮子 → 忽略社区成熟方案 (置信度: medium, 命中: 1)
+## ★★ [2026-06-16] 每次从零造轮子 → 忽略社区成熟方案 (置信度: high, 命中: 2)
 
 **Rule**: 做新功能前先搜 GitHub/web 有无现成方案
 **Wrong**: 想都不想就直接写代码 → 踩的坑社区早踩过、早修好
 **Right**: Phase 0 — 搜索 awesome-lists、官方 skills、高星 repo → 理解 → 适配 → 整合
 **Why**: Claude Code 生态已成熟，1044+ skills、11989+ plugins 存在。别人踩过的坑、固化的工作流，直接搬来用比从零写更快且更稳。
 **泛化**: 任何成熟生态（npm/pip/cargo/marketplace）都适用。先搜后写，先搬后改。
+**再次**: 2026-08-12 — LLM GUI 工具提示反复自造 4 轮 bug（事件方案→轮询→失活→超时兜底），分栏条自造 3 轮（权重→节流→place→对齐），才绕回标准方案 **ttk.Panedwindow** 与「主窗口 place Label 工具提示」；`pip install CTkToolTip`（148⭐ 社区标准）本可一步到位。用户点名「犯了 improve 典型错误：有现成的拿现成的」。
 
 ---
 
