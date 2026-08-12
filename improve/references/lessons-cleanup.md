@@ -140,3 +140,14 @@
 **Wrong**: 用户说「导入超市的库」→ 把 321,450 条（13MB）整个嵌入生成器 + 搜索框，用户纠正「不是这个意思，把常用的导进来，分类做适配」
 **Right**: 先问/确认范围与适配方式（AskUserQuestion：全量嵌入 / 常用分类并入 / 转自然语言短语）；按确认实施
 **Why**: 「库」「那个」是模糊指代；用户真实意图常是「提取常用、适配进现有结构」，全量嵌入会改变工具体积与定位。
+
+---
+
+## ★ [2026-08-12] 桌面 app 源码放运行时目录 → 两套配置分叉 (置信度: high, 命中: 1)
+
+**Rule**: 桌面 app 源码目录与运行时数据目录分离——源码独立放一处，运行时数据（exe / llama-server.exe / models/ / 配置预设 json）统一在 exe 目录。源码别放运行时目录的 dev/ 子目录，否则 BASE 按 `__file__` 指到 dev/，出现「源码版读写 dev/ 的 llm_presets.json / llm_gui_config.json，exe 版读写根目录」的两套分叉。
+**Wrong**: LLM GUI 源码 `E:\AI\llama\dev\llm_gui.py` 嵌在 llama 运行时目录 → dev/ 与根目录各一套 presets/config，数据双源、改错份
+**Right**: 源码迁独立目录（`~/Desktop/AI/Claude/llm-launcher-gui`）；移走后把运行时目录残留（dev/ build/ dist/ __pycache__）**归档移走不删**（`_archived/`），已编译 exe 留在原处照常用
+**Why**: 源码目录 ≠ exe 目录 → 同一 app 两套配置读写分叉，极难排查；清理残留「移走不删」保证可恢复
+**泛化**: 源码内嵌运行时目录的项目：先分目录再归档残留；归档后 diff 两份配置确认无独有数据再安心
+**检测**: 迁移后 `ls` 运行时目录只剩必需文件 + 一个 `_archived/`；两份 presets diff 无独有模型
