@@ -131,3 +131,25 @@
 **Right**: OCR 后读 `~/.local/share/opencode/auth.json` 程序化取精确 key（而非复制 OCR 输出）
 **Why**: key 是精确值，一位错全错；OCR 在 l/1/I、0/O/8 上不可靠。关联 [[OCR 判不了文字重叠]]「OCR 值不可靠」。
 **检测**: 关键值用 `python -c "json.load(...)['key']"` 从权威源读，或让用户粘贴确认，不直接用 OCR 输出。
+
+---
+
+## ★ [2026-08-12] style.display='' 回落 CSS display:none，验证看 offsetHeight 不看 style 字符串 (置信度: high, 命中: 1)
+
+**Rule**: CSS 类自带 `display:none` 时，`el.style.display=''` 是想「恢复默认」，但会**回落到 CSS 的 none** → 元素仍隐藏。显式用 `'block'`/`'flex'`。验证可见性看 `offsetHeight>0`，别只看 `style.display` 字符串（'none' 与 '' 都可能假）。
+**Wrong**: `$('riskNote').style.display = isOnline?'':'none'` → 在线时 style 显示 '' 但实际隐藏，免责声明一直没出现，多次检查 style 字符串都没发现。
+**Right**: `style.display = isOnline?'block':'none'`；验证 `risk.offsetHeight > 0`。
+**Why**: JS 设置 `''` 是删除内联覆盖，回落到样式表值；只查 style 属性查不到「实际是否渲染」。
+
+## ★ [2026-08-12] 负面提示词注入审查/安全术语会抑制露骨内容 (置信度: high, 命中: 1)
+
+**Rule**: 用 LLM 生成 NSFW 负面提示词时，小模型常把 censorship / explicit content / nsfw / moderation 写进负面 → 反向抑制露骨内容生成。指令显式禁止 + 输出后过滤这些词。
+**Wrong**: 负面生成器只要求「列质量问题」→ Qwen3-4B 把 censorship/explicit content 写进负面。
+**Right**: 系统提示加「严禁把审查/安全术语写进负面」+ 后置 `sanitizeNeg` 正则剔除（\b(censorship|explicit content|nsfw|moderation)\b）。
+
+## ★ [2026-08-12] 4B 小模型扛不动复杂结构化输出格式（H3 三字段/六段）(置信度: high, 命中: 3)
+
+**Rule**: 官方结构化格式（长字段名 + 占位符 + 严格纪律）对 4B 是天花板：Qwen3 漏指令回显+年龄漂移、Gemma 保留占位符(MM:/原文)、MiniCPM 整段回显系统提示词。提示词加强约束 + 后处理脚本能改善，但根除不了。复杂结构化任务 → 换大模型，别在 4B 上耗。
+**Wrong**: 期望 4B 完美输出 H3 官方格式 → 三个模型各有各的问题。
+**Right**: 加强约束（STRICT COMPLIANCE：填满占位符/只输出字段/不回显指令）+ 后处理（截断泄漏标记、填时间戳、规整对白占位）；SDXL 短输出 4B 够用。
+**Why**: 长指令 + 模板占位符叠加，4B 注意力/指令遵循不足；后处理是止血不是根治。

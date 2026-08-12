@@ -217,3 +217,20 @@ printf "9222\n/devtools/browser/<current-uuid>\n" > "%LOCALAPPDATA%\Google\Chrom
 **Why**: 三层失败相互叠加，单独排查每一项都「像」网络问题，实际根因各异。关联 [[CORS 预检验证直连]]。
 **检测**: curl 测 /v1/models + chat/completions（绕 CORS 定位端点/模型）；浏览器测看 console 是 CORS 还是空 content。
 
+---
+
+## ★★ [2026-08-12] chrome-devtools 视口模拟/缩放用完必须还原 (置信度: high, 命中: 1)
+
+**Rule**: 用 `emulate`/`resize_page` 做响应式测试后，必须把视口还原到真实窗口尺寸。忘记还原 → 页面一直渲染在缩窄的模拟宽度里，用户看到「页面居左 + 右侧大片空白 + 滚动条」，误判成布局 bug 白排查。
+**Wrong**: 测移动端 `emulate 390x800` 后不还原 → 用户报页面居左空白。
+**Right**: 测完 `evaluate_script(() => ({w: screen.width, h: screen.height}))` 拿物理尺寸 → `emulate({viewport: '<w>x<h>x1'})` 还原。
+**Why**: 浏览器是共享给用户的真实窗口；设备指标模拟是持久覆盖，不还原就残留。
+**检测**: 用户报布局错位 → 先查 `window.innerWidth` 是否等于物理窗口宽。
+
+## ★ [2026-08-12] 顶层 `const` 不进 window，跨 script 共享全局用 `var` (置信度: high, 命中: 1)
+
+**Rule**: 需要另一个 `<script src>` 加载后通过 `window.X` 读取的全局数据，声明用 `var`（顶层 var 才挂 window）。`const`/`let` 只在全局词法作用域，`window.X` 取不到。
+**Wrong**: prompt-db.js 用 `const PROMPT_DB=[...]` → script 加载成功但 `window.PROMPT_DB` undefined，页面显示「已加载 0 条」。
+**Right**: 生成文件用 `var PROMPT_DB=[...]`。
+**Why**: 大库靠 script 标签懒加载（跨域免 CORS），但必须能 `window` 访问；经典 script 顶层声明语义差异。关联 [[CORS 预检验证直连]]。
+
