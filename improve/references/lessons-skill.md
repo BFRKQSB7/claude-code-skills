@@ -466,3 +466,13 @@ docs/
 **Right**: 裸 `/improve` → 确认已加载 + 待命；带词才进子命令流程
 **Why**: 反问打断思路；子命令列表一眼可见，用户自会带词进来。裸敲 = 环境提醒，非问题。
 
+---
+
+## ★ [2026-08-12] 应用项目发布只 commit+push 版本号 → 漏 tag + GitHub Release (置信度: high, 命中: 1)
+
+**Rule**: 发布**任何项目**（应用/工具，不只 skill）走 improve skill 完整发布流程：按 commands.md 定版本号 → 版本号同步源码 → grep 旧版本零残留 → 批量完成所有修改 → **git tag + push tag** → **gh release create（--title vX.Y.Z + --notes-file 正文开门见山 + 附构建产物资产）** → 门禁验证 release 详情 + 默认分支 + tag。只改 VERSION + commit + push **不算发布**。
+**Wrong**: LLM GUI 连发 v1.0.0→1.0.3 四次（只 commit+push 版本号），从未建 git tag / GitHub Release / release notes → 用户提醒「发布要走skill啊」
+**Right**: 每个版本号 = tag + `gh release create vX.Y.Z <exe资产> --title "vX.Y.Z" --notes-file notes.md`；完成后 `gh release view --json assets,body` + `git ls-remote refs/heads/master refs/tags/vX.Y.Z` 验证一致
+**Why**: GitHub Release 是用户下载构建产物 + 看变更履历的入口；只有 commit 无 Release = 拿不到 exe、看不到变更。版本号 ≠ 发布。
+**检测**: 发布后 `gh release list` 有最新版 + tag 与 master HEAD 对齐（或按 覆盖发布 规则重打同 tag）
+
