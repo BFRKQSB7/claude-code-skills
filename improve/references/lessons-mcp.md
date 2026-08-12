@@ -189,3 +189,18 @@ printf "9222\n/devtools/browser/<current-uuid>\n" > "%LOCALAPPDATA%\Google\Chrom
 **Right**: `() => { (async ()=>{ window.__x = await ...; })(); return 'started'; }` → 再 `() => window.__x`
 **Why**: 该 MCP 的 evaluate 不 await async promise，promise 被 GC。两步法本会话验证 5+ 次可靠。测完删全局 + 用唯一键防污染。
 
+---
+
+## ★★ [2026-08-12] curl 可达性 000 → 别断言「已死」，以真实下载/用户实测为准 (置信度: high, 命中: 1)
+
+**Rule**: `curl` 返回 000（连接失败）只说明"这条命令没连上"，可能是 curl/代理/瞬时原因，**不等于目标不可达**。断言「某镜像/站点已死」前必须用真实下载工具实测 + 听用户实际使用反馈。
+**Wrong**: curl 直连+代理都 000 hf-mirror.com → 断言「hf-mirror 已死」并更新记忆 → 用户纠正「hf-mirror 首选且不开代理，实际下载正常」
+**Right**: 断言不可达前：真实下载（浏览器/FDM/`curl -L` 实际拉文件）实测 + 用户实测为准；curl 000 仅作待验证信号
+**Why**: curl 000 可因代理设置、TLS、防火墙、瞬时网络等多因；用户日常下载成功才是强证据。负向断言要穷尽验证（呼应 memory「否定性主张先穷尽再断言」）。
+
+## ★ [2026-08-12] 浏览器直连 API 前先 OPTIONS 预检验证 CORS（含 Origin:null）(置信度: high, 命中: 1)
+
+**Rule**: 设计"纯网页直连某 API"前，先 `curl -X OPTIONS <url> -H "Origin: <源>"` 看 `Access-Control-Allow-Origin` 是否放行；**file:// 页面 Origin 是 `null`，要单独测**。别凭印象假设"必然被拦"或"肯定能调"。
+**Right**: `curl -X OPTIONS https://api.deepseek.com/v1/chat/completions -H "Origin: null" -H "Access-Control-Request-Method: POST" -H "Access-Control-Request-Headers: content-type,authorization"` → 见 `access-control-allow-origin: null` 才确认 file:// 可直连
+**Why**: OpenAI/DeepSeek 实测对 localhost 与 `Origin: null` 都放行——假设会错，实测成本极低。
+

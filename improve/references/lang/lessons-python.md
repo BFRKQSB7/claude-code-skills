@@ -131,3 +131,25 @@
 
 **Rule**: 函数返回值漏标 → `Any` → 调用方也变 `Any` → 整条链失去类型检查
 **Right**: `mypy --disallow-untyped-defs` 强制标注所有函数。返回类型至少标 `-> None`。
+
+---
+
+## #package — 打包陷阱
+
+### ★★ [2026-08-12] PyInstaller onefile: `__file__` 指向 _MEIPASS 临时目录 (置信度: high, 命中: 1)
+
+**Rule**: PyInstaller 打包后 `__file__` = 运行时解压临时目录 `_MEIPASS`，不是 exe 所在目录。资源定位必须用 `os.path.dirname(sys.executable)`（frozen 时）。
+**Wrong**: `BASE = os.path.dirname(os.path.abspath(__file__))` → onefile 运行时 BASE 指向 `%TEMP%\_MEIxxx`，找不到旁边的 llama-server.exe / models/
+**Right**: `if getattr(sys, 'frozen', False): BASE = os.path.dirname(sys.executable) else: BASE = os.path.dirname(os.path.abspath(__file__))`
+**Why**: PyInstaller onefile 启动时把程序解压到临时目录运行，`__file__` 指向那里；exe 自身路径才是 `sys.executable`。必须带 `import sys`。
+
+---
+
+## #gui — GUI 陷阱
+
+### ★★ [2026-08-12] 悬浮提示挂独立 Toplevel → 移走后不消失 (置信度: high, 命中: 1)
+
+**Rule**: tkinter/customtkinter 用独立 `Toplevel` 做 tooltip 时，鼠标移进 tooltip 窗口后原控件收不到 `<Leave>` → tooltip 残留。必须**在 tooltip 窗口本身也绑 `<Leave>`+`<Motion>`**（指针移出即 destroy），控件侧再绑 `<Motion>` 兜底。
+**Wrong**: 只在控件绑 `<Enter>`/`<Leave>`；tooltip 是独立窗口，鼠标悬上去时事件发给 tooltip 而非原控件，`<Leave>` 不触发，移走也不消失
+**Right**: tooltip 窗口 `bind('<Leave>', hide)` + `bind('<Motion>', 指针移出边界→hide)`；控件也 `bind('<Motion>', 移出控件边界→hide)` 双保险
+**Why**: 独立 Toplevel 是另一窗口，鼠标在其上时 `<Motion>`/`<Leave>` 事件路由到 tooltip，原控件收不到。

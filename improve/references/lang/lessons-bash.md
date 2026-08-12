@@ -80,6 +80,7 @@ $text = $text -replace "`n", "`r`n"
 **注意**: Windows 10 1903+ **声称**部分支持 LF-only，但含 `goto`/label/`^`续行/`%%`转义的复杂脚本必定失败。不要依赖部分兼容性。
 **警告**: Git Bash `sed -i` 会自动剥离 CR → 修复后复发。避免用 sed 编辑 .bat；如必须，事后用 PowerShell 重转 CRLF。
 **再次**: 2026-07-25 — aaastart.bat 用户报告 LF-only 启动失败（0 CRLF, 339 LF）。此前文档称"能正常运行"是错误的。sed 修复代码后复发 LF → 二次 CRLF 转换解决。
+**再次**: 2026-08-12 — python `open(f,'w').write()` 重写 .bat 默认写 LF（`newline` 默认 `\n`），需 `open(f,'w',newline='\r\n')` 或事后转回 CRLF 才能被 cmd 正常解析。
 
 ### ★★ "看起来像 ASCII" 的 Unicode 字符 → CP936 解析错位 (置信度: high, 命中: 1)
 
@@ -192,3 +193,28 @@ echo Server exited with code: %EXIT_CODE%
 **Wrong**: `cat file | while read line; do count=$((count+1)); done; echo $count` → 打印 0
 **Right**: `while read line; do count=$((count+1)); done < file; echo $count`
 **Why**: 管道右侧在 subshell 运行。subshell 内变量修改不影响父 shell。
+
+---
+
+## #curl — curl 陷阱
+
+### ★★ [2026-08-12] curl `-m` 截断大文件下载 (置信度: high, 命中: 1)
+
+**Rule**: `curl -m N` 是**整个传输**的最大时间（max-time），大文件会被中途掐断（exit 28，残留残缺文件）。大文件下载不要设 `-m`（或设远超预期时长）。
+**Wrong**: `curl -m 10 -o model.gguf <url>` 下 2.5GB → 10 秒后 000/28，文件只有 ~1.2GB 残缺
+**Right**: 大下载不设 `-m`，后台跑完校验大小；`--connect-timeout` 才是连接超时
+**Why**: `-m` 从开始到完成的总限时；下载"失败"其实是超时截断，且留下半截文件。
+
+### ★ [2026-08-12] git-bash `curl -d` 中文 → JSON 乱码 (置信度: high, 命中: 1)
+
+**Rule**: Windows git-bash 里 `curl -d '{"x":"中文"}'` 参数按系统代码页（GBK）编码 → 服务端 `json.loads` 失败（空响应/400）。含中文的 JSON body 用 python 构造（`json.dumps(..., ensure_ascii=False).encode('utf-8')` + urllib）。
+**Wrong**: `curl -X POST ... -d '{"name":"我的配置"}'` → 服务端解析失败返回空 → 误判为后端 bug
+**Right**: python 构造 UTF-8 body 发送；或 curl 用 `--data-binary @file.json`（文件 UTF-8）
+**Why**: git-bash 命令行参数按 GBK 传给 curl，非 ASCII 字节损坏；服务端按 UTF-8 解就乱。
+
+### ★ [2026-08-12] `ls A || ls B` 输出源不明 (置信度: high, 命中: 1)
+
+**Rule**: `cmd1 || cmd2` 的输出可能来自 cmd1 或 cmd2——读输出**不能假设来自前者**（stderr 被吞后看不出哪条成功）。要确定来源就分开跑。
+**Wrong**: `ls X/models/checkpoints/ 2>/dev/null || ls Y/models/checkpoints/ 2>/dev/null` → 误以为文件在 X，实际来自 Y（X 不存在走了兜底）
+**Right**: 两条 `ls` 分开验证；或 `if [ -d X ]; then ls X; else ls Y; fi` 显式分支
+**Why**: `||` 是"前失败才跑后"，但输出不标注来源；同一命令族输出长得一样时极易误判路径。

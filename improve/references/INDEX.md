@@ -14,7 +14,7 @@
 | Debug | [lessons-debug.md](lessons-debug.md) | 11 | 反馈循环优先/调试日志标记/多假设锚定/代理端口验活/行尾差异/实测当前行为/spawnSync 模拟 stdin/页面测试残留状态/cmd LF行尾误解析 |
 | **GPU** | **[lessons-gpu.md](lessons-gpu.md)** | **4** | **Blackwell 上 paddle cu126 不可用走 onnxruntime+DirectML / 硬件探测独立于加速包（删模块可重装）/ ctypes D3D12 坑用 D3D11 / ORT-DML 同名互斥可卸载切换** |
 | Security | [lessons-security.md](lessons-security.md) | 8 | 注入/凭证泄露/供应链/反序列化/CORS/加密 |
-| **MCP** | **[lessons-mcp.md](lessons-mcp.md)** | **9** | **自起 Chrome+--browserUrl 连接/DevToolsActivePort hack 备选/WebFetch 拦截/WebSearch 技巧/截图溢出/浏览器 vs WebFetch/读 GitHub 文件全文(embeddedData.rawLines)/evaluate_script 异步两步法** |
+| **MCP** | **[lessons-mcp.md](lessons-mcp.md)** | **11** | **自起 Chrome+--browserUrl 连接/DevToolsActivePort hack 备选/WebFetch 拦截/WebSearch 技巧/截图溢出/浏览器 vs WebFetch/读 GitHub 文件全文(embeddedData.rawLines)/evaluate_script 异步两步法/curl 000 假阴性别断言已死/CORS 预检验证直连** |
 
 ## 按需加载决策树
 
@@ -26,7 +26,7 @@
 任务含 "debug/diagnose/bug/fix/log/调试/诊断/复现/排查/diff/compare/对比/行尾/换行符/CRLF" → lessons-debug.md (9条，~100行)
 任务含 "gpu/显卡/cuda/directml/onnx/paddle/推理/模型部署/ocr/blackwell/rtx" → lessons-gpu.md (4条，~40行)
 任务含 "security/auth/token/password/encrypt/injection/安全/认证/加密" → lessons-security.md (8条，~80行)
-任务含 "mcp/chrome/devtools/browser/webfetch/websearch/navigate/snapshot/screenshot/evaluate_script/click/fill/select_page/new_page/fetch/search/URL/huggingface/page/浏览器/搜索/截图/网页/访问/下载/渲染/表单" → lessons-mcp.md (7条，~110行) ⚠️
+任务含 "mcp/chrome/devtools/browser/webfetch/websearch/navigate/snapshot/screenshot/evaluate_script/click/fill/select_page/new_page/fetch/search/URL/huggingface/page/浏览器/搜索/截图/网页/访问/下载/渲染/表单" → lessons-mcp.md (11条，~150行) ⚠️
 ```
 
 ## 交叉索引
