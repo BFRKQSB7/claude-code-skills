@@ -476,3 +476,13 @@ docs/
 **Why**: GitHub Release 是用户下载构建产物 + 看变更履历的入口；只有 commit 无 Release = 拿不到 exe、看不到变更。版本号 ≠ 发布。
 **检测**: 发布后 `gh release list` 有最新版 + tag 与 master HEAD 对齐（或按 覆盖发布 规则重打同 tag）
 
+---
+
+## ★ [2026-08-12] README 写维护者指令 → 用户指出「不像是readme会说的」 (置信度: high, 命中: 1)
+
+**Rule**: README 内容面向项目**用户/访客**，不写维护者视角的部署/发布指令（「把 index.html 放仓库根目录即可」「部署到 Pages 注意…」）。部署步骤、作者待办移到 issue/PR/发布说明。
+**Wrong**: sd-prompt-converter README 写「部署到 GitHub Pages：把 index.html 放仓库根目录即可（Pages 自动托管为首页）」→ 用户直接指出这段是作者指令
+**Right**: 改成用户视角的「在线使用」节：托管地址 + 各后端能否在托管页用（OpenAI/DeepSeek 直连、opencode 需本地代理）
+**Why**: README 是访客理解「怎么用」的入口，作者部署步骤对用户零价值还暴露内部操作。
+**检测**: 写完 README 通读，凡以维护者/作者为动作主语或讲发布/打包/部署流程的句子，删或移发布说明。
+

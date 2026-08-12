@@ -204,3 +204,16 @@ printf "9222\n/devtools/browser/<current-uuid>\n" > "%LOCALAPPDATA%\Google\Chrom
 **Right**: `curl -X OPTIONS https://api.deepseek.com/v1/chat/completions -H "Origin: null" -H "Access-Control-Request-Method: POST" -H "Access-Control-Request-Headers: content-type,authorization"` → 见 `access-control-allow-origin: null` 才确认 file:// 可直连
 **Why**: OpenAI/DeepSeek 实测对 localhost 与 `Origin: null` 都放行——假设会错，实测成本极低。
 
+---
+
+## ★ [2026-08-12] 网页调外部 API：推理模型空响应 / 端点靠猜 / 无 CORS 头 (置信度: high, 命中: 1)
+
+**Rule**: file:// 或跨域页面 fetch 外部 API，三层各自独立失败：
+1. **推理模型空响应**：Qwen3/deepseek 类先出 `reasoning_content` 再出 content，max_tokens 小则思考吃光预算 → `content` 空。请求加 `chat_template_kwargs:{enable_thinking:false}` + max_tokens 提到 2048。
+2. **端点靠猜**：官网地址 ≠ API 端点（opencode.ai/go 是网站，API 是 `opencode.ai/zen/go/v1`）。真实端点从应用配置/认证文件/日志挖（auth.json、provider 配置、运行日志），别猜 host/path。
+3. **无 CORS 头**：自建网关/本地代理不带 `Access-Control-Allow-Origin` → 浏览器拦「Failed to fetch」。curl 能通但浏览器不通 = CORS → 写**本地 CORS 代理**（Python http.server 转发 + 加头，curl 转发绕开 Python SSL 被掐）。
+**Wrong**: opencode 接入：Base URL 填官网 → Failed to fetch；猜 gateway.opencode.ai → 错 host；512 预算被思考吃光 → 空响应，三重误判
+**Right**: ①从 auth.json/provider 配置挖真实端点 ②curl 直连验证端点+模型 ③浏览器测区分 CORS vs 模型问题 → 本地代理兜底
+**Why**: 三层失败相互叠加，单独排查每一项都「像」网络问题，实际根因各异。关联 [[CORS 预检验证直连]]。
+**检测**: curl 测 /v1/models + chat/completions（绕 CORS 定位端点/模型）；浏览器测看 console 是 CORS 还是空 content。
+
