@@ -151,3 +151,12 @@
 **Why**: 源码目录 ≠ exe 目录 → 同一 app 两套配置读写分叉，极难排查；清理残留「移走不删」保证可恢复
 **泛化**: 源码内嵌运行时目录的项目：先分目录再归档残留；归档后 diff 两份配置确认无独有数据再安心
 **检测**: 迁移后 `ls` 运行时目录只剩必需文件 + 一个 `_archived/`；两份 presets diff 无独有模型
+
+---
+
+## ★ [2026-08-13] Windows 大小写改名不落地 → git 跟踪名不变 (置信度: high, 命中: 1)
+
+**Rule**: NTFS 大小写不敏感 + git `core.ignorecase=true` 时，文件名大小写改动（`skill.md`→`SKILL.md`）不能靠 Write/cp 覆盖——磁盘是同一物理文件，git 仍记为 `M <旧名>`，index 跟踪名不变，push 后远端还是小写。必须两步 `git mv` 经临时名强制：`git mv <旧> <临时名> && git mv <临时名> <大写名>`；改名后 `git status` 应显示 `R`（rename），`os.listdir` 确认存储名为大写。
+**Wrong**: cp/Write 直接生成大写文件 → `git status` 显示 `M skill.md`，远端提交仍是 `skill.md` → 大小写敏感 glob 的 skill 加载器（Codex 匹配 `SKILL.md`）可能失败
+**Right**: 两步 `git mv`；commit 后 `git ls-remote` / GitHub API contents 核验远端路径为大写
+**Why**: git 在 Windows 用 index 跟踪名区分大小写，磁盘只有一个物理文件；不强制 rename 就沿用旧大小写。skill 文件名大小写对加载器是真实差异。
