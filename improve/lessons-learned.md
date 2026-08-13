@@ -28,10 +28,10 @@
 | daemon, lock, pid, startup, session, hook, 后台, 守护, 进程, 启动, 竞态, 超时, 并发, 单例 | [lessons-process.md](references/lessons-process.md) |
 | migration, refactor, delete, rename, version, bump, release, install, package, zip, 迁移, 删除, 重命名, 版本, 发布, 打包, 引用, 残留, 清理 | [lessons-cleanup.md](references/lessons-cleanup.md) |
 | api, monitoring, sampling, balance, cli, cross-platform, windows, path, env, 余额, 采样, 轮询, 跨平台, 环境变量, 初始化 | [lessons-state.md](references/lessons-state.md) |
-| skill, plugin, design, naming, description, workflow, learning, readme, i18n, multi-language, 多语言, 翻译, 技能, 插件, 反省, 教训, 学习, 审查, 模板 | [lessons-skill.md](references/lessons-skill.md) |
-| debug, diagnose, bug, fix, log, trace, verify, 调试, 诊断, 复现, 日志, 追踪, 验证, 排查 | [lessons-debug.md](references/lessons-debug.md) |
+| skill, plugin, design, naming, description, workflow, learning, readme, i18n, multi-language, 多语言, 翻译, 技能, 插件, 反省, 教训, 学习, 审查, 模板, 子agent, subagent, 批量, 过滤, 分片, 复审, 橡皮图章 | [lessons-skill.md](references/lessons-skill.md) |
+| debug, diagnose, bug, fix, log, trace, verify, 调试, 诊断, 复现, 日志, 追踪, 验证, 排查, 断言, 反例, 否定, 做不到, 不支持, 门槛, 穷尽, 不可行 | [lessons-debug.md](references/lessons-debug.md) |
 | security, auth, login, token, password, encrypt, hash, injection, XSS, CSRF, CORS, deserialize, pickle, eval, 安全, 认证, 加密, 注入, 反序列化, 依赖 | [lessons-security.md](references/lessons-security.md) |
-| **MCP, mcp__, chrome, devtools, browser, WebFetch, WebSearch, navigate, snapshot, screenshot, evaluate_script, click, fill, hover, select_page, press_key, type_text, upload_file, list_pages, new_page, performance, lighthouse, console, network, fetch, search, URL, link, http, huggingface, page, 浏览器, 搜索, 截图, 网页, 打开, 访问, 页面, 下载, 表单, 登录, 渲染** | **[lessons-mcp.md](references/lessons-mcp.md)** ⚠️ |
+| **MCP, mcp__, chrome, devtools, browser, WebFetch, WebSearch, navigate, snapshot, screenshot, evaluate_script, click, fill, hover, select_page, press_key, type_text, upload_file, list_pages, new_page, performance, lighthouse, console, network, fetch, search, URL, link, http, huggingface, page, 浏览器, 搜索, 截图, 网页, 打开, 访问, 页面, 下载, 表单, 登录, 渲染, OCR, 重叠, DOM, getBoundingClientRect** | **[lessons-mcp.md](references/lessons-mcp.md)** ⚠️ |
 
 ---
 

@@ -234,3 +234,21 @@ printf "9222\n/devtools/browser/<current-uuid>\n" > "%LOCALAPPDATA%\Google\Chrom
 **Right**: 生成文件用 `var PROMPT_DB=[...]`。
 **Why**: 大库靠 script 标签懒加载（跨域免 CORS），但必须能 `window` 访问；经典 script 顶层声明语义差异。关联 [[CORS 预检验证直连]]。
 
+---
+
+## ★★ [2026-08-11] MCP/浏览器连接状态：先实测再断言，别断言「永远」 (置信度: high, 命中: 1)
+
+**Rule**: 关于连接类当前状态（MCP 能不能连、进程/端口活着没、需不需要重启），**先复测工具再下结论**，把「此刻 X」说成「必须 X 才能用」是不准的。
+**Wrong**: 说「当前会话 MCP 在兜底模式、连不上 9222 skill Chrome、需重启 Claude Code 才能接上」→ 实际 MCP 后来自动重连成功（config 变 `ok:true` 后 wrapper 走 `--browserUrl` 接上运行中的 skill Chrome），用户拿另一会话实测（`list_pages` 成功）抓到错误断言。
+**Right**: 任何「当前连不上/进程死了/需重启」断言，先当场复测（`list_pages`/`curl` 端口/查 config）再下结论；状态变了就更新结论并承认。MCP 连接懒加载、会话中途可自恢复。
+**Why**: 会话开头两次 `list_pages` 报 profile 锁错误的时点判断 ≠ 持久状态。关联「否定性主张先穷尽再断言」。
+
+---
+
+## ★ [2026-08-11] 判布局文字重叠：别用 OCR「读得出」/ OCR 框相交 → 用 DOM 几何 (置信度: high, 命中: 1)
+
+**Rule**: 判断文字是否重叠，**别用「OCR 读得出=不重叠」或「OCR 框相交」**——实测均不可靠。唯一可靠判据：`getBoundingClientRect` 两两相交面积 > 阈值，或元素上下边越过卡边界。
+**Wrong**: (1) 重叠区字透过透明注释/页脚仍可见 → OCR 照样读得出（假阴性）；(2) 连续相同汉字（「点点点…」）被 OCR 合并成一框 → 重叠被掩盖（假阴性）；(3) 相邻行 OCR 框带内边距被撑大 → 无重叠也报框相交（假阳性）。
+**Right**: headless Chrome + DOM 几何脚本判重叠（参考 `Desktop\AI\Claude\cardtest\gen.py` 注入检测器）；OCR 只适合读文本内容，不适合判布局。
+**Why**: 2026-08-11 html-guide 1200×630 摘要卡重叠调研实测三案例定论。关联「连接状态先实测再断言」。
+
