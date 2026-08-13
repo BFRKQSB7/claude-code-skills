@@ -73,9 +73,12 @@ user-invocable: true
 6. 输出避坑清单；★★★ 防御措施 → Phase 2 强制门禁
 
 ## Phase 2: 执行
-**发布（语言自适应）**: 检测包管理器 → 版本号同步（**按 `references/commands.md` 版本号更新准则定，不自由发挥**） → **门禁** grep 旧版本零残留 → 打包 → RELEASE+README 模板 → git push → **门禁** 验证默认分支 + GitHub 版本号
+**发布（语言自适应）**: 检测包管理器 → 版本号同步（**按 `references/commands.md` 版本号更新准则定，不自由发挥**） → **门禁** grep 旧版本零残留 → 打包 → RELEASE+README 模板（`templates/`） → git push → **门禁** 验证默认分支 + GitHub 版本号
 **代码生成**: 垂直切片（test1→impl1→test2→impl2），禁水平切片
 详见: [commands.md](references/commands.md)
+
+## 大项目预算（token）
+> 大仓库/长文档默认**不整读**：目录扫描 → 排除 `node_modules/.git/build/vendor/生成目录` → token 审计 → 分阶段增量读取 → 摘要复用。禁止全量源码进上下文。详见: [large-project.md](references/large-project.md)
 
 ## Phase 3: 反省归档
 提炼（场景→现象→根因→修复→泛化）→ 按语言/模式/领域归档 → 合并同根因升优先级 / 30 天休眠 → **同步对应 INDEX.md 教训数**
@@ -83,9 +86,7 @@ user-invocable: true
 **自动推送**: 反省归档完成 → 提交身份断言（`226671264+BFRKQSB7@users.noreply.github.com`）→ 发布克隆 commit + push（**默认执行，不再询问**，2026-08-10 用户明示）
 
 ## Review Checklist
-- [ ] Phase 0: 搜过现成方案？有就搬
-- [ ] Phase 1: 三轴已检测 + 避坑清单已出
-- [ ] SKILL.md ≤ 300 行（skill-creator 允许 <500，本 skill 收紧到 300），引用一层深，新内容符合前置「内容规范」
-- [ ] 发布: 语言自适应 + grep 零残留 + 提交身份断言（`226671264+BFRKQSB7@users.noreply.github.com`）
-- [ ] Phase 3: 新教训按规范归档 + INDEX 教训数已更新
-- [ ] 改过 skill → 已同步 `BFRKQSB7/claude-code-skills` 的 `improve/` 并 push
+- [ ] Phase 0 搜现成方案 / Phase 1 三轴+避坑清单 / Phase 3 归档+INDEX 更新
+- [ ] SKILL.md ≤ 300 行，引用一层深，内容符合「内容规范」
+- [ ] 发布走 commands.md 门禁 + 提交身份断言
+- [ ] 改过 skill → 同步 `claude-code-skills/improve/` 并 push

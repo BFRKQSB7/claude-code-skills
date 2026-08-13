@@ -3,14 +3,8 @@
 > ★★★ 系统性顽疾。Phase 1 无条件加载（~1KB），不依赖关键词路由。
 
 ## 轮换规则
-
-| 状态 | 含义 | 行为 |
-|------|------|------|
-| `permanent` | 复入列表（≥2 次） | **永驻**，不轮换 |
-| `rotatable` | 首次入列 | 30 天未命中 → 降级回 domain 文件 |
-| `dormant` | 已降级 | 只在 domain 文件，再次命中 ★★★ → 升级 `permanent` |
-
-**Phase 3 维护**: 扫描所有教训 → ★★★ 且不在 critical → 加入（`rotatable`）→ 检查 rotatable 条目最后命中日期 → 超 30 天降级 → 降级后复入的标记 `permanent`
+- `permanent`: 复入 ≥2 次 → 永驻；`rotatable`: 首次入列，30 天未命中 → 降级回 domain；`dormant`: 降级后再次 ★★★ → 升 `permanent`
+- **Phase 3 维护**: 扫所有教训 → ★★★ 且不在 critical → 加入（`rotatable`）→ 超 30 天降级 → 复入标 `permanent`
 
 ---
 
@@ -117,6 +111,4 @@
 **Right**: commit 前 `git config user.email` 校验 = `226671264+BFRKQSB7@users.noreply.github.com`；push 后 `gh api repos/<owner>/<repo>/contributors` 确认无陌生账号
 **检测**: `git log --all --format='%an <%ae>' | sort -u` 扫一遍所有提交身份，确认每个邮箱都归属本人账号
 **防御**: 校验必须是**断言**（打印后逐字比对，`printf` 出来不等于通过）。`git config user.email` 可能被**仓库级 `--local` 配置覆盖**——先 `git config --local --get user.email`，再 `git config user.email`，两个都须等于 `226671264+BFRKQSB7@users.noreply.github.com`。备份/同步仓库的提交同样受此门禁约束。
-**再次**: 2026-08-05 — balance-hud(11) + kakuyomu-scraper(3) + claude-code-skills(6) 提交全部误用 `nyro@users.noreply.github.com`，贡献归属陌生账号 nyro(显示名 Florian)，已重写历史修正
-**再次**: 2026-08-05 — claude-code-skills 本地仓库残留 `--local user.email=nyro@users.noreply.github.com` 覆盖；sync 提交打印出错值却未断言拦截即提交+推送，已 reset 到正确基线重推、错误身份提交从远程清除
-**再次**: 2026-08-09 — 备份 skill（minimax-h3 → claude-code-skills、html-guide-skill）时误用 `BFRKQSB7@users.noreply.github.com`（少 `226671264+` 数字前缀）；发布 ai-prompt-supermarket 时已用正确邮箱 `226671264+BFRKQSB7@users.noreply.github.com` 并加 `git log -1 --format='%an <%ae>'` 断言通过。**已解决**：2026-08-09 用户决定全修 — acgn/balance-hud/claude-code-skills/html-guide/kakuyomu 5 仓 `git filter-branch --env-filter` 重写 + `--tag-name-filter cat` + 强推，贡献者全部归一 BFRKQSB7（`gh api .../contributors` 验证）。教训：凡 git commit 必 `git config --local --get user.email` + `git config user.email` 双查并断言，别用 `-c user.email` 简写。
+**再次**: 2026-08-05×2 / 08-09 — 误用 `nyro@`、少 `226671264+` 前缀；已 5 仓 `filter-branch` 重写归一。凡 commit 必双查断言（`--local` + 全局），别用 `-c user.email` 简写。

@@ -118,8 +118,8 @@ gh api repos/<owner>/<repo>/contents/README.md --jq '.content' | base64 -d | hea
 ## 模板
 
 发布时使用统一模板:
-- **RELEASE**: [release-template.md](release-template.md) — 语言自适应 GitHub Release 流程
-- **README**: [readme-template.md](readme-template.md) — 语言自适应 README 节顺序
+- **RELEASE**: [release-template.md](../templates/release-template.md) — 语言自适应 GitHub Release 流程
+- **README**: [readme-template.md](../templates/readme-template.md) — 语言自适应 README 节顺序
 
 ## 创建项目骨架
 

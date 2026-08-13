@@ -28,56 +28,19 @@
 
 > ⚠️ **首选上方新方案**（自己起专用 Chrome + `--browserUrl`），本 hack 仅在无法自己启动浏览器时才需要。
 
-**Rule**: Chrome `--remote-debugging-port` 强制 `--user-data-dir` 为非默认目录，但 MCP 工具硬编码读取 `%LOCALAPPDATA%\Google\Chrome\User Data\DevToolsActivePort`。**不要试图让 MCP 工具读新目录——直接伪造它要的文件**。另外 Chrome 重启后 UUID 会变，旧文件里的 UUID 即使路径正确也连不上。
+**Rule**: Chrome `--remote-debugging-port` 强制非默认 `--user-data-dir`，但 MCP 工具硬编码读 `%LOCALAPPDATA%\Google\Chrome\User Data\DevToolsActivePort` → **直接伪造它要的文件**，别试图让它读新目录。Chrome 重启后 UUID 会变，旧文件 UUID 失效 → 每次重启后必须重同步 UUID。
 
-**Wrong**:
-```
-# Chrome 写 DevToolsActivePort 到自定义目录
-chrome --remote-debugging-port=9222 --user-data-dir=C:\custom-dir
-# MCP 读默认目录 → 找不到 → 永远连不上
-```
-
-**Right**:
-```
-# 1. 启动 Chrome（可以不带 --user-data-dir，用默认目录）
-chrome --remote-debugging-port=9222
-
-# 2. 从 Chrome HTTP API 获取当前 browser UUID
-curl http://127.0.0.1:9222/json/version → webSocketDebuggerUrl
-
-# 3. 更新 DevToolsActivePort（覆盖旧 UUID）
-printf "9222\n/devtools/browser/<current-uuid>\n" > "%LOCALAPPDATA%\Google\Chrome\User Data\DevToolsActivePort"
-```
-
-**Why**: MCP 工具代码写死默认路径，Chrome 安全策略禁止默认目录开调试端口 → 两个约束冲突 → 唯一解法是"欺骗"MCP 工具
-
-**UUID 过期问题**: Chrome 每次启动生成新 UUID。上次会话的 `DevToolsActivePort` 文件还在，但 UUID 已失效。MCP 读到旧 UUID → 连接旧 WebSocket endpoint → 404。**每次 Chrome 重启后必须重新同步 UUID**。
-
-**完整诊断流程**:
+**Right（伪造 + 同步 UUID）**:
 ```bash
-# Step 1: 确认端口在监听
-curl -s http://127.0.0.1:9222/json/version || echo "Chrome not listening"
-
-# Step 2: 对比 UUID
-cat "%LOCALAPPDATA%\Google\Chrome\User Data\DevToolsActivePort" 2>/dev/null
-# 第二行 /devtools/browser/<uuid> 必须和 Step 1 的 webSocketDebuggerUrl 匹配
-
-# Step 3: 不匹配 → 写入当前 UUID
-printf "9222\n/devtools/browser/<current-uuid>\n" > "%LOCALAPPDATA%\Google\Chrome\User Data\DevToolsActivePort"
+chrome --remote-debugging-port=9222                                       # 1. 启动（可默认目录）
+curl -s http://127.0.0.1:9222/json/version                                # 2. 拿当前 UUID（webSocketDebuggerUrl）
+printf "9222\n/devtools/browser/<当前UUID>\n" > "%LOCALAPPDATA%\Google\Chrome\User Data\DevToolsActivePort"  # 3. 覆盖旧 UUID
 ```
+**诊断**: 连不上 → 先 `curl .../json/version` 确认端口监听 + 拿 UUID → 对比文件第二行，不匹配就重写。
+**启动**: 禁止 bash `start "" chrome.exe`（桌面生成快捷方式）→ 直接后台运行 exe 或让用户自己开 Chrome。
 
-**检测**: 先 `curl http://127.0.0.1:9222/json/version` 确认端口在监听 + 拿到当前 UUID → 对比文件里的 UUID
-
-**启动方式**: **禁止**从 bash 用 `start "" chrome.exe` 启动 Chrome → 桌面上生成 `Google Chrome.lnk` 快捷方式。改用：
-```bash
-# 正确：直接后台运行，不经过 start
-"C:\Program Files\Google\Chrome\Application\chrome.exe" --remote-debugging-port=9222 &
-```
-或者直接告诉用户自己打开 Chrome（如果已经在运行，只修 UUID 即可）。
-
-**命中**: 2026-07-06 — 9 次重试才连上，根因路径不匹配
-**再次**: 2026-07-07 — DevToolsActivePort 存在但连不上，根因 UUID 过期（Chrome 重启后 UUID 变了，文件里是旧的 `5eb7f394`，实际是 `9815446a`）
-**再次**: 2026-07-07 — 每次用 `start "" chrome.exe` 从 bash 启动都会在桌面生成快捷方式
+**Why**: MCP 代码写死默认路径 + Chrome 禁默认目录开调试端口 → 冲突唯一解 = 欺骗 MCP 工具。
+**命中**: 2026-07-06 — 9 次重试才连上（路径不匹配）；07-07 — UUID 过期 + start 生成快捷方式。
 
 ---
 
