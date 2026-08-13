@@ -200,3 +200,21 @@
 **Right**: 自动保存改目录句柄模式：`showDirectoryPicker` 选文件夹 → 文件固定 `dtag_fav.json`（`getFileHandle(name,{create:true})`）→ 存 dirHandle，重选时 `startIn: dirHandle`；路径显示「文件夹名 / 文件名」。盘符只能用户手动填。
 **Why**: File System Access API 安全模型故意隐藏绝对路径，parent 访问在 Chrome 未实现。用户要求「显示完整路径含盘符」时先测原型再定方案，别假设 API 提供。
 **Where**: 2026-08-11 标签超市 v2.5.0 自动保存增强。实测：`FileSystemFileHandle.prototype` = [createWritable,getFile,move]，目录 handle 无 getParent。
+
+---
+
+## #html — HTML 单页陷阱
+
+### ★★ [2026-08-14] Write/Edit 内容里的 `\x00` 转义落盘为真实 NUL 字节 → 文件变 binary (置信度: high, 命中: 1)
+
+**Rule**: 用 Write/Edit 写源码时，内容里任何 `\x00`/` ` 反斜杠转义会被工具按 JSON 语义解码成真实控制字节写进文件 → 文件被 Grep 识别为 binary、Edit/Grep 全部失效、node/python 解析报 "cannot contain null bytes"。
+**Wrong**: 用 NUL 做 markdown code-block 占位符（`'\x00' + i + '\x00'`）→ 写完文件里 3 个真实 NUL，后续 python 脚本也被污染。
+**Right**: 占位符/分隔符一律用纯 ASCII token（如 `@@MD0@@`），正则 `/^@@MD\d+@@$/` 匹配；不要用任何控制字符。
+**Why**: 工具参数走 JSON 序列化，`\x00` 是合法转义 → 落盘即真实 NUL。教训同 [2026-08-05] Edit old_string 含 `\uXXXX`（同类：反斜杠转义在工具层的解析）。
+
+### ★ [2026-08-14] input[type=number] 的 step 校验从 min 起步 → 默认值可能 invalid (置信度: high, 命中: 1)
+
+**Rule**: number input 合法值 = `min + k*step`（k≥0）。设 `min=-1` + `step=16` + `value=1024` → (1024-(-1)) 不整除 16 → `validity.valid=false`，a11y 显示 `invalid="true"`。想让用户任意手动输入：`step="any"`。
+**Wrong**: min="-1"（允许 -1 表示"不限"）配默认值 → 默认值被判 invalid。
+**Right**: `step="any"` 保留任意输入（含负值），或调整 min 使默认值对齐 step。
+**Where**: 2026-08-14 llama-chat-ui 参数面板 max_tokens/repeat_last_n。
