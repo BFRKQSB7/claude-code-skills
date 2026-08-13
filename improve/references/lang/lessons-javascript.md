@@ -218,3 +218,10 @@
 **Wrong**: min="-1"（允许 -1 表示"不限"）配默认值 → 默认值被判 invalid。
 **Right**: `step="any"` 保留任意输入（含负值），或调整 min 使默认值对齐 step。
 **Where**: 2026-08-14 llama-chat-ui 参数面板 max_tokens/repeat_last_n。
+
+### ★★ [2026-08-14] OpenAI 兼容 baseUrl 拼接：用户填 /v1 后缀 + 代码再拼 /v1/chat/completions → 404 (置信度: high, 命中: 1)
+
+**Rule**: 任何 OpenAI 兼容前端，baseUrl 语义要兼容「服务根」或「已带 /v1 后缀」两种填法。请求路径必须经规范化函数：`apiRoot = baseUrl.replace(/\/v1$/i, '')`，再拼 `/v1/chat/completions`、`/health`。
+**Wrong**: `fetch(baseUrl + '/v1/chat/completions')` + 用户填 `http://host:4000/v1` → `/v1/v1/chat/completions` → 404 "File Not Found"，assistant 回复空。
+**Right**: 统一 apiRoot() strip 尾部 `/v1`（health 同样走 apiRoot），用户填不带 /v1 也不出错。
+**Where**: 2026-08-14 llama-chat-ui 真机联调（Qwen3.5 @4000），用户 baseUrl 填了 `/v1` 后缀。
