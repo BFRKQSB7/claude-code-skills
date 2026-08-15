@@ -148,3 +148,12 @@
 **Wrong**: cp/Write 直接生成大写文件 → `git status` 显示 `M skill.md`，远端提交仍是 `skill.md` → 大小写敏感 glob 的 skill 加载器（Codex 匹配 `SKILL.md`）可能失败
 **Right**: 两步 `git mv`；commit 后 `git ls-remote` / GitHub API contents 核验远端路径为大写
 **Why**: git 在 Windows 用 index 跟踪名区分大小写，磁盘只有一个物理文件；不强制 rename 就沿用旧大小写。skill 文件名大小写对加载器是真实差异。
+
+---
+
+## ★ [2026-08-15] 发布借鉴他人产品的界面/图标 → 缺致谢声明 (置信度: high, 命中: 1)
+
+**Rule**: 项目界面/图标复用其他产品元素（如 ChatGPT/DeepSeek）→ 发布前 README 必须加致谢声明（中英两版同步），别等用户提醒
+**Wrong**: llama-chat-ui 布局/图标直接复用 ChatGPT+DeepSeek，README 只写「ChatGPT 风格」→ 用户更正「有些元素直接拿来用了」
+**Right**: README 加「致谢/Acknowledgments」节：界面布局、交互与部分图标借鉴自 XXX 网页版（部分直接复用）；中英两版同步更新
+**Why**: 直接复用他人产品元素不声明 = 误导原创 + 遗漏合规；低成本诚实声明防返工
