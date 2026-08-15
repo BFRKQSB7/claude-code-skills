@@ -153,3 +153,10 @@
 **Wrong**: 只在控件绑 `<Enter>`/`<Leave>`；tooltip 是独立窗口，鼠标悬上去时事件发给 tooltip 而非原控件，`<Leave>` 不触发，移走也不消失
 **Right**: tooltip 窗口 `bind('<Leave>', hide)` + `bind('<Motion>', 指针移出边界→hide)`；控件也 `bind('<Motion>', 移出控件边界→hide)` 双保险
 **Why**: 独立 Toplevel 是另一窗口，鼠标在其上时 `<Motion>`/`<Leave>` 事件路由到 tooltip，原控件收不到。
+
+### ★ [2026-08-15] CTkLabel 不随 grid sticky 拉伸 + 带内边距 → 精确宽度提示文本用 tk.Label (置信度: high, 命中: 1)
+
+**Rule**: customtkinter 的 CTkLabel 不随 grid `sticky='ew'` / pack `fill='x' expand=True` 拉伸（内部 canvas 卡在文本自然宽），且自带 ~31px 内边距；CTk 控件尺寸是**逻辑值 × DPI 缩放**（逻辑 900 → 物理 1350）。需要"吃满剩余宽度/精确到文本宽"的次要提示文本（文件名、路径）改用普通 `tk.Label`（零内边距、正确随 sticky 拉伸、`winfo_width` 准确），背景对齐 CTk 深色主题色（`gray17`=`#2b2b2b`）。
+**Wrong**: CTkLabel + grid `sticky='ew'` + weight 列放自动匹配到的文件名 → 控件宽卡文本宽，长文件名截断；`winfo_reqwidth`（含内边距）> `winfo_width` 仍未拉伸。排障时按 900 逻辑宽估算放不下，实际要按 1.5x 物理宽（`winfo_width`）判断。
+**Right**: `tk.Label(frame, text='', fg=..., bg='#2b2b2b', anchor='w')` + grid `sticky='ew'`（列 weight=1）→ 零内边距、正确吃满剩余宽度、ToolTip 悬浮命中区域准确
+**Why**: CTkLabel 内部是 CTkFrame+canvas，canvas 尺寸固定为文本，grid/pack 拉伸对自定义 widget 不生效；内边距来自 CTk 主题（非可配置）。DPI 缩放让逻辑/物理尺寸分离，宽度预算判断必须用物理值。
