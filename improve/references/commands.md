@@ -22,6 +22,11 @@ detect_lang .
 > 1. **About 必填** — 建仓后 `gh repo edit <owner>/<repo> --description "<描述>"` 必须执行，空 About 不允许发布。
 > 2. **双语言 README（文件切换版，★ 2026-08-10 更正）** — 根 `README.md` 放中文（默认），英文在 `docs/en/README.md`，标题下放语言切换条。**发布/改 README 时中英两版必须同步更新**，不允许只改一版。
 
+> ⚠️ **长期化维护（用户登记 2026-08-10，发布必做）**：每个仓库根目录维护「维护文档.md」（模板见 `templates/maintenance-template.md`），**发布时同步更新**：
+> 1. 目录结构 / 发布流程 / 版本纪律有变化 → 维护文档跟着改，不留陈旧信息
+> 2. 提交信息用 **Conventional Commits 轻量 5 前缀**：`feat` `fix` `docs` `refactor` `chore`（不装工具）
+> 3. **tag 必须与版本文件同步**（`package.json` / `pyproject.toml` / `VERSION` / README 版本号）：禁止 tag 滞后——历史教训（balance-hud v2.2.2 曾滞后补、llm-sight VERSION 2.0.0 曾滞后），补 tag 是掩盖问题的临时手段，发布时一次对齐
+
 ## 版本号更新准则（x.y.z，不自由发挥）
 
 > 用户登记 2026-08-10。发布前按此定版本号，禁止随手编。**覆盖发布仅限两类**：小更新+距上次不久、删已发布文件的个性化信息；其余一律新 tag。

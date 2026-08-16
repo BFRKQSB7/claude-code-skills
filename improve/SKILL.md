@@ -52,7 +52,7 @@ user-invocable: true
 |------|------|
 | `/improve`（无有效提示词） | 默认=提醒加载 improve skill：进入就绪态（Phase 1 教训已加载），**不反问**子命令；带明确词才进对应流程 |
 | `/improve learn <topic\|url>` | 搜 GitHub/web 最佳实践并吸收 |
-| `/improve create <name>` | 创建项目骨架（语言检测 → 模板） |
+| `/improve create <name>` | 创建项目骨架（语言检测 → 模板 + 维护文档） |
 | `/improve update` | 同步版本号 + grep 旧版本零残留 |
 | `/improve publish` | 语言自适应发布（检测包管理器 → 打包 → GitHub） |
 | `/improve reflect` | 手动反省 → 三轴归档 |
@@ -73,7 +73,7 @@ user-invocable: true
 6. 输出避坑清单；★★★ 防御措施 → Phase 2 强制门禁
 
 ## Phase 2: 执行
-**发布（语言自适应）**: 检测包管理器 → 版本号同步（**按 `references/commands.md` 版本号更新准则定，不自由发挥**） → **门禁** grep 旧版本零残留 → 打包 → RELEASE+README 模板（`templates/`） → git push → **门禁** 验证默认分支 + GitHub 版本号
+**发布（语言自适应）**: 检测包管理器 → 版本号同步（**按 `references/commands.md` 版本号更新准则定，不自由发挥**） → **门禁** grep 旧版本零残留 → **同步维护文档.md**（`templates/maintenance-template.md`；目录/发布流程/版本纪律有变就更新，tag 与版本文件同步） → 打包 → RELEASE+README 模板（`templates/`） → 提交按 **Conventional Commits 5 前缀**（`feat`/`fix`/`docs`/`refactor`/`chore`） → git push → **门禁** 验证默认分支 + GitHub 版本号
 **代码生成**: 垂直切片（test1→impl1→test2→impl2），禁水平切片
 详见: [commands.md](references/commands.md)
 
