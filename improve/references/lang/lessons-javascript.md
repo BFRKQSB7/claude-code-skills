@@ -222,6 +222,6 @@
 ### ★★ [2026-08-14] OpenAI 兼容 baseUrl 拼接：用户填 /v1 后缀 + 代码再拼 /v1/chat/completions → 404 (置信度: high, 命中: 1)
 
 **Rule**: 任何 OpenAI 兼容前端，baseUrl 语义要兼容「服务根」或「已带 /v1 后缀」两种填法。请求路径必须经规范化函数：`apiRoot = baseUrl.replace(/\/v1$/i, '')`，再拼 `/v1/chat/completions`、`/health`。
-**Wrong**: `fetch(baseUrl + '/v1/chat/completions')` + 用户填 `http://host:4000/v1` → `/v1/v1/chat/completions` → 404 "File Not Found"，assistant 回复空。
+**Wrong**: `fetch(baseUrl + '/v1/chat/completions')` + 用户填 `http://host:<端口>/v1` → `/v1/v1/chat/completions` → 404 "File Not Found"，assistant 回复空。
 **Right**: 统一 apiRoot() strip 尾部 `/v1`（health 同样走 apiRoot），用户填不带 /v1 也不出错。
-**Where**: 2026-08-14 llama-chat-ui 真机联调（Qwen3.5 @4000），用户 baseUrl 填了 `/v1` 后缀。
+**Where**: 2026-08-14 llama-chat-ui 真机联调（Qwen3.5 @<端口>），用户 baseUrl 填了 `/v1` 后缀。

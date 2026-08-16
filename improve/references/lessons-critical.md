@@ -120,9 +120,11 @@
 **Rule**: 本机个性化信息**不进发布文件，也不进程序/网页的 UI 文案**：OS 用户名、绝对路径（`C:\Users\<用户名>\`、`/Users/<用户名>/`、**盘符路径 `E:\...`**）、本机代理端口、hostname、token、个人使用习惯（偏好端口/专属工具名/启动命令）。发布源只允许通用占位符（`~`、`%USERPROFILE%`、`<用户名>`、`Path.home()`）。
 **Why**: 公开仓库任何人可见；用户名泄漏可被社工；硬编码路径使脚本在他机失效。
 **检测**（发布门禁必跑，覆盖 .py/.md/.json/.spec/.jinja，排除 .git/build/dist）:
-- 盘符/绝对路径：`grep -rInF ':\' --include='*.py' --include='*.md' .` —— 正则 `[A-Za-z]:\\` 结尾反斜杠报 **"Trailing backslash"**，改用**固定串 `grep -F ':\'`**；`E:\AI\llama\` 这种无用户名盘符路径**也算泄漏**
+- 盘符/绝对路径：`grep -rInF ':\' --include='*.py' --include='*.md' .` —— 正则 `[A-Za-z]:\\` 结尾反斜杠报 **"Trailing backslash"**，改用**固定串 `grep -F ':\'`**；`<盘符>:\<软件目录>\` 这种无用户名盘符路径**也算泄漏**
+- **正斜杠盘符/家目录实布局**（固定串 `:\` 抓不到）：`grep -rInE "D:/|C:/|~/Desktop" .` —— `D:/<python目录>/python.exe`、`~/Desktop/<工作目录>/` 均泄漏
 - 用户名：`grep -rIn "<OS用户名>" .` 零残留
 - 代理端口：`grep -rInE "127\.0\.0\.1:[0-9]+|localhost:[0-9]+" .` 零残留
+- **个人使用端口/LAN IP**（URL 正则漏网，`400[01]` 常裸写）：`grep -rInE "(^|[^0-9])400[01]([^0-9]|$)" .` + `grep -rInE "192\.168\.|10\.|172\.(1[6-9]|2[0-9]|3[01])\." .`
 - Release 正文同样扫（`gh release view <tag> --json body`），历史 release 也要清
-**Wrong**: html-guide/kakuyomu `C:\Users\...`；llm-sight 帮助文本代理端口；LLM GUI tooltip 写「翻译 4000/转换 4001」使用习惯；llm-launcher-gui 维护清单 `E:\AI\llama\LLMGUI.exe` 盘符路径（2026-08-15 门禁固定串扫抓到，泛化为「运行时目录」）
+**Wrong**: html-guide/kakuyomu `C:\Users\...`；llm-sight 帮助文本代理端口；LLM GUI tooltip 写「翻译 `<端口>`/转换 `<端口>`」使用习惯；llm-launcher-gui 维护清单 `<盘符>:\<软件目录>\LLMGUI.exe` 盘符路径（2026-08-15 门禁固定串扫抓到，泛化为「运行时目录」）
 **再次**: 2026-08-08 html-guide/kakuyomu / 2026-08-10 llm-sight / 2026-08-12 LLM GUI tooltip / 2026-08-15 llm-launcher-gui 盘符路径

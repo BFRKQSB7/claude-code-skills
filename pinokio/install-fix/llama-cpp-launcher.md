@@ -2,7 +2,7 @@
 
 > 加载条件: AI 模型启动器 / llama-server 启动脚本 / .bat 菜单 / 多模型切换脚本
 
-**模板文件**: `E:\AI\llama\aaastart.bat`（纯 ASCII 英文，12GB VRAM，5 模型菜单）
+**模板文件**: `<llama安装目录>\aaastart.bat`（纯 ASCII 英文，12GB VRAM，5 模型菜单）
 
 ---
 
@@ -106,7 +106,7 @@ title LLM Launcher - 12GB VRAM - 5070Ti
 cd /d "%~dp0"
 
 REM ========== Global ==========
-set "PORT=4000"
+set "PORT=8080"
 set "LLAMA_SERVER=llama-server.exe"
 set "MODELS_DIR=models"
 if not defined MODE set "MODE=Local" & set "HOST=127.0.0.1"
@@ -248,7 +248,7 @@ goto menu
    - 国内镜像(优先): `DL` = hf-mirror.com
    - 原始站(备用): `DL2` = huggingface.co
 
-完整示例见 `E:\AI\llama\aaastart.bat`。
+完整示例见 `<llama安装目录>\aaastart.bat`。
 
 ---
 
@@ -256,10 +256,10 @@ goto menu
 
 | 文件 | 路径 | 用途 | 关联模型 |
 |------|------|------|----------|
-| `aaastart.bat` | `E:\AI\llama\` | 多模型启动菜单脚本 | 全部 |
-| `gemma_chat_template.jinja` | `E:\AI\llama\` | Gemma 3 自定义 Jinja 模板 | [1] TranslateGemma-12B |
-| `llama-server.exe` | `E:\AI\llama\` | llama.cpp 推理服务器 | 全部 |
-| `models\*.gguf` | `E:\AI\llama\models\` | 量化模型文件 | 各自对应 |
+| `aaastart.bat` | `<llama安装目录>\` | 多模型启动菜单脚本 | 全部 |
+| `gemma_chat_template.jinja` | `<llama安装目录>\` | Gemma 3 自定义 Jinja 模板 | [1] TranslateGemma-12B |
+| `llama-server.exe` | `<llama安装目录>\` | llama.cpp 推理服务器 | 全部 |
+| `models\*.gguf` | `<llama安装目录>\models\` | 量化模型文件 | 各自对应 |
 
 **注意**: `gemma_chat_template.jinja` 是 TranslateGemma-12B 的**必需**配套文件。缺少时模型启动即崩溃（0xC0000409）。模板内容见坑2。
 
@@ -342,10 +342,10 @@ error while handling argument "--flash-attn": error: unknown value for --flash-a
 
 **修复步骤**:
 1. 移除 `--jinja` 参数（防止强制使用损坏的内置模板）
-2. 创建 `gemma_chat_template.jinja`（位于 `E:\AI\llama\`，内容见下）
+2. 创建 `gemma_chat_template.jinja`（位于 `<llama安装目录>\`，内容见下）
 3. 在启动参数中添加 `--chat-template-file "%~dp0gemma_chat_template.jinja"`
 
-**模板内容** (`E:\AI\llama\gemma_chat_template.jinja`):
+**模板内容** (`<llama安装目录>\gemma_chat_template.jinja`):
 ```
 {{ bos_token }}{% for message in messages %}{% if message['role'] == 'user' %}<start_of_turn>user
 {{ message['content'] }}<end_of_turn>
@@ -447,9 +447,9 @@ error while handling argument "--flash-attn": error: unknown value for --flash-a
 
 ## 坑7: LAN 模式 API 显示 `0.0.0.0` → 用户不知道实际连接地址 ★★
 
-**现象**: LAN 模式下脚本窗口显示 `API: http://0.0.0.0:4000/v1`，局域网其他设备上的用户不知道应该填什么 IP。
+**现象**: LAN 模式下脚本窗口显示 `API: http://0.0.0.0:8080/v1`，局域网其他设备上的用户不知道应该填什么 IP。
 
-**根因**: `0.0.0.0` 是**绑定地址**（告诉 llama-server 监听所有网卡），不是**可连接地址**。其他设备不能用 `0.0.0.0` 发起连接——必须用服务器的实际局域网 IP（如 `192.168.3.157`）。
+**根因**: `0.0.0.0` 是**绑定地址**（告诉 llama-server 监听所有网卡），不是**可连接地址**。其他设备不能用 `0.0.0.0` 发起连接——必须用服务器的实际局域网 IP（如 `<局域网IP>`）。
 
 **修复**（分离 HOST 和 SHOW_HOST）:
 1. 初始化时用 `ipconfig` 自动检测本机 LAN IP：
@@ -483,8 +483,8 @@ if not defined LAN_IP set "LAN_IP=0.0.0.0"
 | Gemma3 模型崩溃 | 退出码 -1073740791 | 自定义 `--chat-template-file`（见坑2） |
 | 标点符号丢失 | RP 模型回复无标点 | `--min-p` 降到 0.02（见坑3） |
 | 删参数留空行 | `error: invalid argument:` | 去掉 ^ 续行块中的空白行（见坑4） |
-| 端口占用 | Steam 占 8080/4000 | `netstat -ano \| grep PORT` → `taskkill /F /PID X` |
+| 端口占用 | Steam 占 8080 | `netstat -ano \| grep PORT` → `taskkill /F /PID X` |
 | GPU 卸载不足 | 推理 <1 t/s | `-ngl 999`（全 GPU），大模型按需减 |
 | 并发排队 | `--parallel 1` | 12GB 最多 `--parallel 2`，再高 OOM |
-| SillyTavern 连接 | 连不上 | API Type=Chat Completion, URL=`http://127.0.0.1:4000/v1`, Key 随便填 |
+| SillyTavern 连接 | 连不上 | API Type=Chat Completion, URL=`http://127.0.0.1:8080/v1`, Key 随便填 |
 | 多轮对话静默 | context 溢出 | 减小搜索结果/缩短 ctx/开新对话 |

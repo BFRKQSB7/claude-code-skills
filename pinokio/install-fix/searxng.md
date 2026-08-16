@@ -43,7 +43,7 @@ module.exports = {
 ```
 然后用系统 Python（非 conda）创建 venv 安装依赖：
 ```bash
-D:/python/python.exe -m venv env
+<盘符>:/<python安装目录>/python.exe -m venv env
 env/Scripts/pip install -r app/requirements.txt -r app/requirements-server.txt
 env/Scripts/pip install -e app/. --no-build-isolation
 ```

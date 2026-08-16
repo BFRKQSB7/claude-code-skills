@@ -42,13 +42,13 @@
 
 **Rule**: 任何修改 improve skill 文件（SKILL.md / lessons / INDEX / 删文件）后，Phase 3 反省时把改动同步到 GitHub 备份 repo `BFRKQSB7/claude-code-skills` 的 `improve/` 并 push。**反省完默认自动推送，不再询问用户**（2026-08-10 用户明示）
 **Why**: 备份 repo 是 `~/.claude/skills/` 的 self-use 备份。不同步则多会话后备份严重过期（本会话发现备份仍含已删除的 `agent-brief.md` / `handoff.md` / `references/lessons-learned.md`）
-**Right**: 同步流程（备份 clone 在 `~/Desktop/AI/Claude/clone/claude-code-skills`，已设本地代理）:
+**Right**: 同步流程（备份 clone 在 `~/<克隆目录>/claude-code-skills`，已设本地代理）:
 ```bash
-cd ~/Desktop/AI/Claude/clone/claude-code-skills && git pull
+cd ~/<克隆目录>/claude-code-skills && git pull
 rsync -a --delete "~/.claude/skills/improve/" improve/
 git add -A && git commit -m "sync: improve <改动摘要>" && git push
 ```
-**检测**: 修改后 `git -C ~/Desktop/AI/Claude/clone/claude-code-skills status --short improve/` 无输出 = 已同步
+**检测**: 修改后 `git -C ~/<克隆目录>/claude-code-skills status --short improve/` 无输出 = 已同步
 **再次**: 2026-08-10 — 反省归档后教训+路径修正 3 个文件滞留 clone 未提交，等用户开口才推。用户明确「以后默认反省完自动推送」→ 反省完 = 提交身份断言 + commit + push 一气呵成
 **泛化**: 任何"自修改型"skill（会更新自身教训文件）都要内置备份步骤，否则知识库与备份分叉。
 
@@ -235,7 +235,7 @@ git add -A && git commit -m "sync: improve <改动摘要>" && git push
 **Why**: skill 安装目录与发布仓库很容易分叉（本会话桌面副本停留在 v1.0，加载目录已是 v2.0）。用错源 = 线上 SKILL.md/README 落后于实际功能。
 **检测**: 发布前 `diff -rq` 源目录与 repo，有差异先确认改动方向再发布。⚠️ **CRLF/LF 假差异**：Windows 下 repo 检出 CRLF、加载目录常为 LF，`diff -rq` 会把所有文件标成 differ——先 `diff <(tr -d '\r' < repo) <(tr -d '\r' < src)` 归一化换行再数真实差异（2026-08-08：9 个文件"不同"，归一化后仅 skeleton.html 1 个真改动，8 个全是行尾噪音）
 
-**再次**: 2026-08-10 — browser-testing 的发布克隆在桌面 `~/Desktop/AI/Claude/browser-testing-skill`（git 仓库），运行目录 `~/.claude/skills/browser-testing` 反而没有 .git。本会话先在桌面克隆做了合并改动、运行目录仍是旧版——两边分叉。修正：改动同步进运行目录（让 Claude 加载的版本一致），再从克隆 commit+push。教训补充：**改 skill 必须「运行目录 + 发布克隆」双向同步**，判断哪边新用归一化 diff，别只改一边。
+**再次**: 2026-08-10 — browser-testing 的发布克隆在桌面 `~/<发布克隆目录>/browser-testing-skill`（git 仓库），运行目录 `~/.claude/skills/browser-testing` 反而没有 .git。本会话先在桌面克隆做了合并改动、运行目录仍是旧版——两边分叉。修正：改动同步进运行目录（让 Claude 加载的版本一致），再从克隆 commit+push。教训补充：**改 skill 必须「运行目录 + 发布克隆」双向同步**，判断哪边新用归一化 diff，别只改一边。
 
 ---
 
@@ -461,7 +461,7 @@ docs/
 
 ## ★ [2026-08-10] 发布克隆散落多目录 → 挪动后路径引用漏改 (置信度: high, 命中: 1)
 
-**Rule**: 发布克隆集中一个目录（`~/Desktop/AI/Claude/clone/`）；挪动后全量更新硬编码旧路径的引用：项目 `settings.local.json` 权限白名单、记忆文件、skill 内部同步流程（`cd ~/claude-code-skills` 类命令）。
+**Rule**: 发布克隆集中一个目录（`~/<克隆目录>/`）；挪动后全量更新硬编码旧路径的引用：项目 `settings.local.json` 权限白名单、记忆文件、skill 内部同步流程（`cd ~/claude-code-skills` 类命令）。
 **Wrong**: 克隆散落 `~/claude-code-skills`、`~/html-guide-skill`、项目根 3 处 → 迁入 `clone/` 后漏改 `lessons-skill.md` 的 `cd ~/claude-code-skills` 同步命令 → 未来同步在失效路径失败
 **Right**: 统一放 `clone/`；挪动后 `grep -rn "<旧路径>"` 全量扫（settings/记忆/skill 内部）逐处改
 **Why**: 路径引用埋在 3 层（权限配置/记忆文档/技能内部流程），只挪目录不追引用 = 静默断链（2026-08-10 实测抓到 3 处：settings.local.json Read 白名单、memory 两文件、lessons-skill.md sync 命令）

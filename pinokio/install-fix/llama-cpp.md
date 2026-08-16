@@ -13,7 +13,7 @@ llama-server 通过启动脚本运行，被 Open WebUI 作为外部 API 调用�
 **现象**: `bind: address already in use` 或无法绑定端口
 
 **根因**: Steam（steamwebhelper.exe）常驻 8080，其他服务也可能抢占常用端口。已记录的冲突：
-- 端口 4000 → Steam / 其他 llama 实例
+- 端口 8080 → Steam / 其他 llama 实例
 - 端口 8000 → NeatReader / 其他桌面软件
 
 **修复**:
@@ -147,7 +147,7 @@ RP/聊天推荐 DRY 参数:
    API Type:       Chat Completion
    API:            OpenAI (或 Custom)
    API Key:        sk-test（随便填）
-   API URL:        http://127.0.0.1:4000/v1
+   API URL:        http://127.0.0.1:8080/v1
    ```
 2. 不需要代理、不需要 Ollama。llama-server 自带 `/v1/chat/completions` 端点
 3. 端口必须一致（bat 里 `--port` 和 SillyTavern 填的端口）

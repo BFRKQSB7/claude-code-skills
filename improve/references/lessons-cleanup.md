@@ -72,8 +72,8 @@
 ## ★★ [2026-08-10] 会话临时文件用完不删 → 项目目录堆垃圾 (置信度: high, 命中: 2)
 
 **Rule**: 会话工作产生的**一次性临时产物**（调试日志、验证截图、临时下载/解压副本、可再下载的工具）用完后当场删；项目/工作目录只留正式产出与发布克隆。
-**Wrong**: 调试 OCR 留 `ocr_stderr.txt`+`ocr_stderr2.txt`；SDXL 验证截图留 `outputs/comfyui_*.png`；绘世启动器解压副本留 `项目/.launcher`（75M，真正运行的其实在 `E:\AI\ai-image\`）→ 目录堆满重复与调试垃圾
-**Right**: 会话收尾 `ls` 目录逐项分类：临时→删，缓存→留（自动再生），正式→留；大体积工具放正式位置（E:\AI\ai-image），项目目录不留副本
+**Wrong**: 调试 OCR 留 `ocr_stderr.txt`+`ocr_stderr2.txt`；SDXL 验证截图留 `outputs/comfyui_*.png`；绘世启动器解压副本留 `项目/.launcher`（75M，真正运行的其实在 `<盘符>:\<软件目录>\`）→ 目录堆满重复与调试垃圾
+**Right**: 会话收尾 `ls` 目录逐项分类：临时→删，缓存→留（自动再生），正式→留；大体积工具放正式位置（`<盘符>:\<软件目录>`），项目目录不留副本
 **Why**: 临时产物对后续会话零价值，还干扰「哪是正式产出」的判断；多会话各留一份 → 目录膨胀（2026-08-10 清理项目目录，垃圾项占大头）
 **检测**: 收尾 `ls` 目录按「正式/缓存/临时」分类，临时项零残留
 
@@ -82,7 +82,7 @@
 ## ★ [2026-08-11] Write 工具 Windows 字面路径 vs Bash /tmp → 误建盘符根目录 (置信度: high, 命中: 1)
 
 **Rule**: Git Bash `/tmp` = `C:/Users/<user>/AppData/Local/Temp`（`pwd -W` / `cygpath -w` 可查），但 Write/Edit 工具用 Windows 字面路径。给 Bash 产物写文件前先 `pwd -W` 确认映射，写完 `ls` 核对落点。
-**Wrong**: 克隆在 `/tmp/aps-clone`（=AppData\Local\Temp），Write 写到 `C:\tmp\aps-clone` → 两处副本 + 盘符根多出垃圾目录。
+**Wrong**: 克隆在 `/tmp/aps-clone`（=AppData\Local\Temp），Write 写到 `<盘符>:\tmp\aps-clone` → 两处副本 + 盘符根多出垃圾目录。
 **Right**: 先 `pwd -W` 取真实 Windows 路径再 Write；或 Bash `cp` 落地。写错路径后 `rm -rf` 清掉误建目录。
 **Why**: Bash 与 Write 工具路径语义不同（/tmp 映射 vs 字面盘符）。跨工具写文件是路径错位重灾区。
 
@@ -134,8 +134,8 @@
 ## ★ [2026-08-12] 桌面 app 源码放运行时目录 → 两套配置分叉 (置信度: high, 命中: 1)
 
 **Rule**: 桌面 app 源码目录与运行时数据目录分离——源码独立放一处，运行时数据（exe / llama-server.exe / models/ / 配置预设 json）统一在 exe 目录。源码别放运行时目录的 dev/ 子目录，否则 BASE 按 `__file__` 指到 dev/，出现「源码版读写 dev/ 的 llm_presets.json / llm_gui_config.json，exe 版读写根目录」的两套分叉。
-**Wrong**: LLM GUI 源码 `E:\AI\llama\dev\llm_gui.py` 嵌在 llama 运行时目录 → dev/ 与根目录各一套 presets/config，数据双源、改错份
-**Right**: 源码迁独立目录（`~/Desktop/AI/Claude/llm-launcher-gui`）；移走后把运行时目录残留（dev/ build/ dist/ __pycache__）**归档移走不删**（`_archived/`），已编译 exe 留在原处照常用
+**Wrong**: LLM GUI 源码 `<盘符>:\<软件目录>\dev\llm_gui.py` 嵌在 llama 运行时目录 → dev/ 与根目录各一套 presets/config，数据双源、改错份
+**Right**: 源码迁独立目录（`~/<源码目录>/llm-launcher-gui`）；移走后把运行时目录残留（dev/ build/ dist/ __pycache__）**归档移走不删**（`_archived/`），已编译 exe 留在原处照常用
 **Why**: 源码目录 ≠ exe 目录 → 同一 app 两套配置读写分叉，极难排查；清理残留「移走不删」保证可恢复
 **泛化**: 源码内嵌运行时目录的项目：先分目录再归档残留；归档后 diff 两份配置确认无独有数据再安心
 **检测**: 迁移后 `ls` 运行时目录只剩必需文件 + 一个 `_archived/`；两份 presets diff 无独有模型
@@ -162,7 +162,7 @@
 
 ## ★ [2026-08-15] 发布门禁代理端口正则误报 CORS 通用示例端口 (置信度: high, 命中: 1)
 
-**Rule**: 发布门禁扫 `127.0.0.1:[0-9]+|localhost:[0-9]+` 命中时，先区分**本机代理端口**（如 7896，个性化泄漏）vs **通用示例端口**（前端开发默认 3000/5173/8080，教学占位），别一刀切当泄漏
+**Rule**: 发布门禁扫 `127.0.0.1:[0-9]+|localhost:[0-9]+` 命中时，先区分**本机代理端口**（如 `<代理端口>`，个性化泄漏）vs **通用示例端口**（前端开发默认 3000/5173/8080，教学占位），别一刀切当泄漏
 **Wrong**: llm-launcher-gui 加 `--cors` 功能，示例 `http://localhost:3000,http://localhost:5173` 被门禁正则命中 → 差点当泄漏误删示例
 **Right**: 通用前端开发端口按示例放行保留；只删对应用户代理配置的本机端口
 **Why**: 泄漏的是本机个性化端口，示例端口删了反而让文档/工具失去教学价值

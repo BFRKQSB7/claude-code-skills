@@ -187,15 +187,15 @@ Follow these sections in order:
   - if popup sizing matters and the user does not specify one, default to `--preset center-medium`
   - examples:
     - open on the current machine with the default popup-preferred behavior:
-      - `pterm open http://192.168.86.26:42011`
+      - `pterm open http://127.0.0.1:42011`
     - open on the current machine in the system browser:
-      - `pterm open http://192.168.86.26:42011 --surface browser`
-    - open on peer `192.168.86.26` using that peer's local app URL:
-      - `pterm open http://127.0.0.1:7860 --peer 192.168.86.26`
-    - open on peer `192.168.86.26` in that peer's system browser:
-      - `pterm open http://127.0.0.1:7860 --peer 192.168.86.26 --surface browser`
-    - open on peer `192.168.86.26` as a large popup:
-      - `pterm open http://127.0.0.1:7860 --peer 192.168.86.26 --preset center-large`
+      - `pterm open http://127.0.0.1:42011 --surface browser`
+    - open on peer `<对端IP>` using that peer's local app URL:
+      - `pterm open http://127.0.0.1:7860 --peer <对端IP>`
+    - open on peer `<对端IP>` in that peer's system browser:
+      - `pterm open http://127.0.0.1:7860 --peer <对端IP> --surface browser`
+    - open on peer `<对端IP>` as a large popup:
+      - `pterm open http://127.0.0.1:7860 --peer <对端IP> --preset center-large`
 - Failure criteria:
   - timeout before success
   - app drops back to `offline` during startup after a run attempt
