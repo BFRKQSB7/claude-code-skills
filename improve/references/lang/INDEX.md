@@ -7,7 +7,7 @@
 
 | 语言 | 文件 | 教训数 | 重点领域 |
 |------|------|--------|----------|
-| Python | [lessons-python.md](lessons-python.md) | 19 | async create_task / 裸except / 可变默认参数 / 迭代改列表 / with资源 / pickle RCE / eval注入 / 明文协议 / PyInstaller sys.frozen / tooltip Toplevel不消失 / CTkLabel不随grid拉伸用tk.Label |
+| Python | [lessons-python.md](lessons-python.md) | 20 | async create_task / 裸except / 可变默认参数 / 迭代改列表 / with资源 / pickle RCE / eval注入 / 明文协议 / PyInstaller sys.frozen / tooltip Toplevel不消失 / CTkLabel不随grid拉伸用tk.Label / PyInstaller onefile 二进制grep不到源码串 |
 | JavaScript/TS | [lessons-javascript.md](lessons-javascript.md) | 25 | Promise不await / forEach+async / var闭包 / any传染 / fetch缺超时 / innerHTML XSS / prototype pollution / SSR hydration / ANSI字符串长度 / DOM运行时JS静默失效(textContent/中文id/sticky兜底) / \uXXXX字面量Edit匹配 / 展示值取展示层(收藏中文) / File System Access API无path/getParent / Write写入\x00→NUL变binary / number input step从min起步invalid / OpenAI兼容baseUrl /v1后缀重复拼接404 |
 | Go | [lessons-go.md](lessons-go.md) | 11 | goroutine泄漏 / channel未关闭 / defer在循环 / nil interface / time.After泄漏 / context断链 / WaitGroup竞态 / range取地址 |
 | Rust | [lessons-rust.md](lessons-rust.md) | 4 | unwrap生产panic / 生命周期传染 / clone滥用 / tokio drop handle |

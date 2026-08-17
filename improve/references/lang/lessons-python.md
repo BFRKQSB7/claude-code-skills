@@ -143,6 +143,13 @@
 **Right**: `if getattr(sys, 'frozen', False): BASE = os.path.dirname(sys.executable) else: BASE = os.path.dirname(os.path.abspath(__file__))`
 **Why**: PyInstaller onefile 启动时把程序解压到临时目录运行，`__file__` 指向那里；exe 自身路径才是 `sys.executable`。必须带 `import sys`。
 
+### ★ [2026-08-17] PyInstaller onefile 二进制 grep 找不到源码字符串 → 误判改动未进包 (置信度: high, 命中: 1)
+
+**Rule**: 打包后**不要用 binary grep 验证改动是否进 exe**。源码被编译+压缩进 PYZ archive，中文/emoji 等 UTF-8 源码串在二进制里无原文；能 grep 到 ASCII 依赖名（`customtkinter`）是 import 元数据仍明文，会造成「依赖能找、源码找不到」的错觉。验证链条 = 确认构建发生在改动之后 + `md5sum dist/` 与部署目录文件比对（同源即等价）+ 运行时冒烟测试断言真实行为（stub 掉 modal dialog 后测逻辑）。
+**Wrong**: `grep -c "新提示文案" LLMGUI.exe` = 0 → 误判 fix 没打进包，浪费时间去翻构建缓存/重打包（连旧源码串也 grep 不到，ASCII 依赖却能找到 16 次）
+**Right**: ① 重跑一次 `pyinstaller LLMGUI.spec`（构建必在改动后）② `md5sum dist/LLMGUI.exe` vs 部署目录 exe 比对一致 ③ 冒烟测试 stub `messagebox.showwarning` 断言 fired once、无 showerror
+**Why**: PyInstaller 把 .py 编译+ZlibArchive 压缩进 PYZ，二进制里是压缩流非明文；UTF-8 中文串压缩后无原文可 grep。
+
 ---
 
 ## #gui — GUI 陷阱
