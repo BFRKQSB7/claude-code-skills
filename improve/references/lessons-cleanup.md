@@ -167,3 +167,22 @@
 **Right**: 通用前端开发端口按示例放行保留；只删对应用户代理配置的本机端口
 **Why**: 泄漏的是本机个性化端口，示例端口删了反而让文档/工具失去教学价值
 **检测**: 命中后核对端口是否对应用户代理配置（查记忆/代理工具）；3000/5173/8000/8080 默认当示例
+
+---
+
+## ★ [2026-08-17] 覆盖发布重打同 tag → 忘 force push tag (置信度: high, 命中: 1)
+
+**Rule**: 覆盖发布（重打同 tag）时必须 `git push origin <tag> --force`，否则旧 tag 留在远端、release 仍指向旧 commit
+**Wrong**: llm-launcher-gui v1.7.0 CORS 修正后本地 `git tag -d && git tag -a` 重打，push 时漏 `--force` → 远端 tag 还是旧指向
+**Right**: 重打 tag 三步：`git tag -d vX` → `git tag -a vX` → `git push origin vX --force`（先删远端 release 再重建）
+**Why**: 覆盖发布 = 让 release 页指向最新 commit；tag 不 force 推送则 release 资产与代码脱节
+
+---
+
+## ★ [2026-08-17] 验证 annotated tag 指向 → rev-parse 返回 tag 对象 hash 误判 (置信度: high, 命中: 1)
+
+**Rule**: `git rev-parse <tag>` 对 annotated tag 返回 tag 对象自身 hash（≠ commit hash）；验证 tag 指向哪个提交用 `git show <tag>` 或 `git rev-parse <tag>^{}`，别拿它当 commit 判断
+**Wrong**: llm-launcher-gui 审计 v1.7.0 tag 指向，`git rev-parse v1.7.0` 得 fb819a9 ≠ HEAD 5abea80 → 误以为 tag 挂错提交
+**Right**: `git show v1.7.0` 显示 peeled 目标就是 5abea80（`Tagger` 行下方是 commit hash）；或 `git rev-parse v1.7.0^{}` 直接剥出 commit hash
+**Why**: annotated tag 是独立对象，rev-parse 不带 `^{}` 给的是对象 hash；用 commit hash 比对 tag 会虚惊一场
+
