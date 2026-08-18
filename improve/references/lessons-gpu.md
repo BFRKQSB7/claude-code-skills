@@ -35,3 +35,12 @@
 
 **泛化**: onnxruntime-directml 提供同名 `onnxruntime` 模块且互斥安装（装 DML 覆盖 CPU，卸载装回 CPU）→ 天然实现「GPU 加速模块可删/可重装」，无需自己维护两套运行时。
 **核心**: 依赖设计把「可选加速」做成一键安装/卸载的包切换，而非编译期开关。
+
+---
+
+## ★ [2026-08-18] 查 llama.cpp 参数语义 → 直接跑本机 llama-server.exe --help (命中: 1)
+
+**Rule**: llama.cpp 参数（默认值/别名/语义）不确定 → 直接 `./llama-server.exe --help | grep 参数`。本机二进制即权威（含默认值与 env 变量）；WebSearch / GitHub 讨论常搜不到或过时。
+**Wrong**: WebSearch 查 `--image-min-tokens` 默认值、`--no-kv-offload` 语义 → 官方 README/讨论都不写，无定论。
+**Right**: 本机 `--help` 拿到权威定义：`image-min-tokens` 默认 "read from model"（视觉模型动态分辨率用）；`kv-offload` 默认 "enabled"（`--no-kv-offload` = 禁卸载 → KV 留系统内存，腾显存给模型层/上下文）。
+**Why**: 用户装的 llama.cpp 版本才是行为真相。估 KV/层数直接解析 GGUF 头（`GGUF`+u32 版本+u64 tensor/kv 数+KV 表），`head_count_kv × key_length × block_count × 2` = KV 每 token 元素数（q8_0≈1 字节/元素），比按参数量猜准得多。
