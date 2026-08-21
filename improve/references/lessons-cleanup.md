@@ -186,3 +186,13 @@
 **Right**: `git show v1.7.0` 显示 peeled 目标就是 5abea80（`Tagger` 行下方是 commit hash）；或 `git rev-parse v1.7.0^{}` 直接剥出 commit hash
 **Why**: annotated tag 是独立对象，rev-parse 不带 `^{}` 给的是对象 hash；用 commit hash 比对 tag 会虚惊一场
 
+---
+
+## ★ [2026-08-21] 版本 grep 用 v 前缀排除 → README 徽章漏检假通过 (置信度: high, 命中: 1)
+
+**Rule**: bump 版本号后全局 grep 旧版本时，**不要用 `vX.Y.Z` 形式做排除**——README 徽章（`![badge/version-v1.8.0-blue]`）自带 `v` 前缀，会被一起滤掉；只排除变更日志历史行（含 `（2026`），其余逐条人工确认
+**Wrong**: `grep -rn "1\.8\.0" . | grep -v "v1\.8\.0"` → README 顶部徽章行被滤掉 → "零残留"门禁假通过，徽章留在 v1.8.0（本次 llm-launcher-gui v1.9.0 发布实测踩中）
+**Right**: 门禁分两步——(1) grep 全部旧版本，仅排除含 `（2026`/`(2026` 的 changelog 历史行；(2) 单独 `grep -iE "badge|version" README*` 核对徽章/标题行
+**Why**: 徽章用 img.shields.io `version-v1.8.0` 形式，`v` 前缀是徽章组成部分，用它做排除恰好命中徽章。版本号是发布一致性核心，漏一处用户可见 → 返工
+**关联**: [[发布 bump 版本号本地源文件同步]] [[发布前未自查界面版本号]]
+
