@@ -24,6 +24,13 @@
 **Rule**: N > 1000 的循环，每 10% 或每 1000 条打印进度/日志
 **Right**: `if i % 1000 == 0: print(f"{i}/{N}")` / progress bar library / structured logging
 
+### ★ [2026-08-23] 多阶段批处理重复折算进度 → 百分比倒退 (置信度: high, 命中: 1)
+
+**Rule**: 每阶段先分配全局区间，再映射页面进度；公式只能含一次 `item_index / total`。
+**Wrong**: 把含 36% 全局基线的页面进度再次除以总页数，审核后进度从 36% 降到 18%。
+**Right**: `global = phase_start + ((item_index + page/100) / total) * phase_span`。
+**Why**: 阶段百分比与页面百分比属于不同坐标系，嵌套归一化会重复缩放基线。
+
 ### ★ O(N²) 嵌套循环 → 性能陷阱 (置信度: medium, 命中: 1)
 
 **Rule**: 对列表每个元素遍历另一列表 → O(N²)。常见反模式：`for x in xs: if x in ys:`。

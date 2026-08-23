@@ -128,3 +128,12 @@
 - Release 正文同样扫（`gh release view <tag> --json body`），历史 release 也要清
 **Wrong**: html-guide/kakuyomu `C:\Users\...`；llm-sight 帮助文本代理端口；LLM GUI tooltip 写「翻译 `<端口>`/转换 `<端口>`」使用习惯；llm-launcher-gui 维护清单 `<盘符>:\<软件目录>\LLMGUI.exe` 盘符路径（2026-08-15 门禁固定串扫抓到，泛化为「运行时目录」）
 **再次**: 2026-08-08 html-guide/kakuyomu / 2026-08-10 llm-sight / 2026-08-12 LLM GUI tooltip / 2026-08-15 llm-launcher-gui 盘符路径
+
+---
+
+## ★★★ 测试依赖外部状态 → flaky `rotatable` (since: 2026-08-23, last_hit: 2026-08-23)
+
+**Rule**: 单元测试隔离网络/数据库/时间/开发机模型缓存；可选能力必须 mock 为明确的“有”或“无”。
+**Wrong**: 自动读取本地 ONNX，导致新机器测回退算法、开发机测模型推理。
+**Right**: 单元测试固定依赖状态；真实模型另设 integration 测试与受控样本。
+**Why**: 本地缓存也是外部状态；环境分支会制造假失败与漏测。

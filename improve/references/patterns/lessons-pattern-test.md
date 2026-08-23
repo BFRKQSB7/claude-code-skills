@@ -14,11 +14,12 @@
 **来源**: Matt Pocock `tdd` skill
 **泛化**: 任何 AI agent 代码生成都适用。垂直 = 每次 cycle 学习实现细节。水平 = 猜测 × N。
 
-### ★★ 测试依赖外部状态 → flaky (置信度: high, 命中: 2)
+### ★★★ [2026-08-23] 测试依赖外部状态 → flaky (置信度: high, 命中: 3)
 
-**Rule**: 单元测试不接触网络/文件系统/数据库/当前时间。用 mock/stub/fake。
-**Right**: Python `unittest.mock` / JS `jest.mock()` / Go `interface` + fake impl / Rust `#[cfg(test)]` + mockall
-**Why**: Flaky test = 失去信任 = 没人看测试结果。外部依赖的测试放 integration/e2e，单元测试保持纯函数。
+**Rule**: 单元测试隔离网络/数据库/时间/开发机模型缓存；可选能力必须 mock 为明确的“有”或“无”。
+**Wrong**: 测试自动读取本地已下载 ONNX；同一测试在新机器走回退算法，在开发机走模型推理。
+**Right**: mock/stub/fake 固定依赖状态；真实模型另设 integration 测试和受控样本。
+**Why**: 本地缓存也是外部状态；环境分支改变被测算法会制造假失败与漏测。
 
 ### ★★ 只测 happy path → 边界未覆盖 (置信度: high, 命中: 2)
 
