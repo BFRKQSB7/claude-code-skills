@@ -225,3 +225,10 @@
 **Wrong**: `fetch(baseUrl + '/v1/chat/completions')` + 用户填 `http://host:<端口>/v1` → `/v1/v1/chat/completions` → 404 "File Not Found"，assistant 回复空。
 **Right**: 统一 apiRoot() strip 尾部 `/v1`（health 同样走 apiRoot），用户填不带 /v1 也不出错。
 **Where**: 2026-08-14 llama-chat-ui 真机联调（Qwen3.5 @<端口>），用户 baseUrl 填了 `/v1` 后缀。
+
+### ★ [2026-08-24] 持久化控件由 checkbox 改 select → 旧布尔值静默选错模式 (置信度: high, 命中: 1)
+
+**Rule**: 改变 localStorage 表单字段的控件类型或值域时，在恢复入口显式迁移旧值，再让新控件消费。
+**Wrong**: 旧 checkbox 保存 `true/false`，新 select 只认 `auto/manual`；直接赋值后 `value=""`，业务分支误判为手动模式。
+**Right**: 恢复时按字段与旧类型映射 `true→auto`、`false→manual`，并用测试固定迁移行为。
+**Why**: localStorage 跨版本保留；DOM 不会报告无效 option 值，类型变化会静默改变用户设置。
