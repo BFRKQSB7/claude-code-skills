@@ -239,3 +239,10 @@
 **Wrong**: 保存文字样式后重绘术语清单 → “自定义翻译”回到“保留原文”，区域译文也被无条件清空。
 **Right**: 重绘前保存 mode/translation 并恢复；仅当 OCR 原文实际改变时清空旧译文。
 **Why**: DOM 是临时状态；兄弟设置的局部保存不应改变尚未提交的用户决策。
+
+### ★ [2026-08-25] 修饰键点击等到 click 才处理 → 父级拖拽先抢 pointerdown (置信度: high, 命中: 1)
+
+**Rule**: 与拖拽竞争的 Ctrl/Shift 点击动作必须在 `pointerdown` 捕获阶段识别，并 `preventDefault` + `stopPropagation`。
+**Wrong**: 子元素等 `click` 才合并，父查看器已在 `pointerdown` 捕获指针并开始拖图。
+**Right**: 捕获阶段执行修饰键动作；普通 click 只处理无修饰键选择，父拖拽再加同条件 guard。
+**Why**: 交互优先级由最早消费指针序列的一方决定，不由后执行的 click handler 决定。
