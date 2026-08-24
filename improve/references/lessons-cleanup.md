@@ -4,7 +4,7 @@
 
 ---
 
-## ★★★ 变更后未全局 grep → 引用断裂 (置信度: high, 命中: 9)
+## ★★★ 变更后未全局 grep → 引用断裂 (置信度: high, 命中: 10)
 
 > **→ 常加载** `[lessons-critical.md](lessons-critical.md)` 含完整 Rule / 6 子模式 / 防御 / 再次记录
 
