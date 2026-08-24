@@ -10,7 +10,7 @@
 | Async | [lessons-pattern-async.md](lessons-pattern-async.md) | 6 | 超时/竞态/限流/顺序假设/IndexedDB promise永不settle/状态发布与落盘竞态 + 5语言差异表 |
 | Loop | [lessons-pattern-loop.md](lessons-pattern-loop.md) | 6 | 修改迭代对象/闭包/进度/多阶段批处理进度/O(N²)/querySelector 只改第一个 |
 | Error | [lessons-pattern-error.md](lessons-pattern-error.md) | 5 | 吞错误/无上下文/异常链断裂/类型太粗/术语保护污染或回退 + 5语言差异表 |
-| I/O | [lessons-pattern-io.md](lessons-pattern-io.md) | 6 | 资源泄漏/外部输入校验/大文件OOM/编码假设 + 5语言差异表 |
+| I/O | [lessons-pattern-io.md](lessons-pattern-io.md) | 7 | 资源泄漏/外部输入校验/大文件OOM/编码假设/目录下载身份 + 5语言差异表 |
 | Type | [lessons-pattern-type.md](lessons-pattern-type.md) | 4 | 宽类型/any传染/null缩窄/enum穷举 |
 | Test | [lessons-pattern-test.md](lessons-pattern-test.md) | 4 | 水平切片/外部状态与模型缓存flaky/只测happy path/测试名无场景 + 5语言差异表 |
 | Perf | [lessons-pattern-perf.md](lessons-pattern-perf.md) | 4 | 不profile就优化/过早缓存/循环alloc/字符串拼接O(N²) + 4语言差异表 |

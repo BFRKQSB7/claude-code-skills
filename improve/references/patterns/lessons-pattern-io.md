@@ -120,6 +120,15 @@ text = text.replace('PERCENTPERCENT', '%%')
 
 ---
 
+## ★ [2026-08-25] 远端文件名兼作目录身份 → 安装成功仍显示未安装 (命中: 1)
+
+**Rule**: 目录型下载用元数据中的规范文件名落盘；URL basename 只作无元数据时的回退。
+**Wrong**: 下载按 URL 文件名保存，安装状态却按目录 filename 判断 → 空格/连字符不同导致按钮永远显示“安装”。
+**Right**: 安装入口显式传 canonical filename；回归覆盖 URL 编码空格与目录名不同的资源。
+**Why**: URL 文件名是传输细节，不是资源身份；落盘名与状态键必须来自同一事实源。
+
+---
+
 ## 语言差异
 
 | 陷阱 | Python | JavaScript | Go | Rust | Bash |
