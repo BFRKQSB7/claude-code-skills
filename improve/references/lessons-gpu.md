@@ -53,3 +53,11 @@
 **Wrong**: 因模型在 CUDA 上就传 `torch.Generator(device="cuda")` → `Expected a 'cpu' device type for generator but found 'cuda'`。
 **Right**: `torch.Generator(device="cpu").manual_seed(seed)`，噪声随后由上游搬到 CUDA；用真实 GPU 推理验证，不只测模型加载。
 **Why**: Generator 必须和随机张量的创建设备一致，而非和最终模型设备一致；第三方管线常把设备迁移放在采样之后。
+
+---
+
+## ★ [2026-08-25] 自动 GPU 初始化回退后仍缓存请求设备 → 每次重复加载模型 (置信度: high, 命中: 1)
+
+**Rule**: 加速初始化失败并回退 CPU 后，缓存键和状态必须记录实际创建的设备，不能沿用回退前的请求设备。
+**Wrong**: 请求 `auto/GPU`、实际创建 CPU，却缓存为 GPU → 下一次命中判定失败，重复初始化 det/cls/rec 模型。
+**Right**: 完成回退后用 `active_gpu` 生成缓存键；测试连续获取两次并断言实例 identity 相同、构造次数不增加。

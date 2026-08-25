@@ -12,7 +12,7 @@
 | State | [lessons-state.md](lessons-state.md) | 9 | API 采样/跨平台 CLI/实时性/statusLine 被重写/凭据回退/残留进程污染/模型 env 重映射/IndexedDB恢复句柄校验 |
 | Skill | [lessons-skill.md](lessons-skill.md) | 45 | 发布流程/教训审查/SKILL.md 架构/术语/命名/衍生项目文档/多语言 README/纯外语 README 必补中文（文件切换版）/代理指令禁弹窗/断言验运行时/迭代基线优化/手动插件注册/独立仓库确认/运行目录与 diff 克隆分离/raw CDN 缓存验证/单文件 HTML GitHub Pages 托管/外部 skill 合并映射表/README 内容用户视角/子agent 32K 上限/级联复审橡皮图章/双向分叉同步先判定基线 |
 | Debug | [lessons-debug.md](lessons-debug.md) | 26 | 反馈循环优先/调试日志标记/多假设锚定/代理端口验活/行尾差异/实测当前行为/spawnSync 模拟 stdin/页面测试残留状态/cmd LF行尾误解析/OCR数值不验证不写程序/OCR关键值二次核对权威源/style.display空串回落none/负面词审查术语抑制露骨/4B扛不动复杂结构化输出/全量库角色名检索三坑/否定性主张先穷尽再断言/文字遮罩候选完整性与边界裁剪分离/竖排先按视觉字形归一化再拟合/字号统一不得跨独立样式区取最小值/跨语言横排字号用文字高度估算/单关键词不得用于代码判定/字号相似与字块占用率需同时约束/二级 OCR 覆盖需语义门禁/艺术字模型实测无增益则转视觉 OCR |
-| **GPU** | **[lessons-gpu.md](lessons-gpu.md)** | **6** | **Blackwell 走 ORT/DirectML / 加速探测与安装解耦 / D3D11 硬件探测 / ORT-DML 互斥 / llama.cpp 查本机 / 采样 Generator 跟随机张量创建设备** |
+| **GPU** | **[lessons-gpu.md](lessons-gpu.md)** | **7** | **Blackwell 走 ORT/DirectML / 加速探测与安装解耦 / D3D11 硬件探测 / ORT-DML 互斥 / llama.cpp 查本机 / 采样 Generator 跟随机张量创建设备 / GPU 回退缓存实际设备** |
 | Security | [lessons-security.md](lessons-security.md) | 8 | 注入/凭证泄露/供应链/反序列化/CORS/加密 |
 | **MCP** | **[lessons-mcp.md](lessons-mcp.md)** | **16** | **自起 Chrome+--browserUrl 连接/DevToolsActivePort hack 备选/WebFetch 拦截/WebSearch 技巧/截图溢出/浏览器 vs WebFetch/读 GitHub 文件全文(embeddedData.rawLines)/evaluate_script 异步两步法/curl 000 假阴性别断言已死/CORS 预检验证直连/推理模型空响应+端点挖掘+CORS代理/视口模拟用完还原/顶层const不进window/连接状态先实测再断言/OCR判重叠用DOM几何** |
 
@@ -24,7 +24,7 @@
 任务含 "api/monitoring/cli/cross-platform/windows/path/采样/跨平台" → lessons-state.md (8条，~95行)
 任务含 "skill/plugin/design/naming/description/readme/i18n/multi-language/多语言/翻译/技能/反省/学习/审查/模板/子agent/subagent/批量/过滤/分片/复审" → lessons-skill.md (45条)
 任务含 "debug/diagnose/bug/fix/log/调试/诊断/复现/排查/diff/compare/对比/行尾/换行符/CRLF/断言/反例/否定/做不到/不支持/门槛/穷尽" → lessons-debug.md (22条，~250行)
-任务含 "gpu/显卡/cuda/directml/onnx/paddle/推理/模型部署/ocr/blackwell/rtx" → lessons-gpu.md (6条，~65行)
+任务含 "gpu/显卡/cuda/directml/onnx/paddle/推理/模型部署/ocr/blackwell/rtx" → lessons-gpu.md (7条，~75行)
 任务含 "security/auth/token/password/encrypt/injection/安全/认证/加密" → lessons-security.md (8条，~80行)
 任务含 "mcp/chrome/devtools/browser/webfetch/websearch/navigate/snapshot/screenshot/evaluate_script/click/fill/select_page/new_page/fetch/search/URL/huggingface/page/浏览器/搜索/截图/网页/访问/下载/渲染/表单/OCR/重叠/DOM" → lessons-mcp.md (16条，~220行) ⚠️
 ```
