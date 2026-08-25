@@ -240,12 +240,12 @@
 **Right**: 重绘前保存 mode/translation 并恢复；仅当 OCR 原文实际改变时清空旧译文。
 **Why**: DOM 是临时状态；兄弟设置的局部保存不应改变尚未提交的用户决策。
 
-### ★ [2026-08-25] 修饰键点击等到 click 才处理 → 父级拖拽先抢 pointerdown (置信度: high, 命中: 1)
+### ★★ [2026-08-25] 修饰键交互等到 click 才处理 → 父级拖拽先抢 pointerdown (置信度: high, 命中: 2)
 
-**Rule**: 与拖拽竞争的 Ctrl/Shift 点击动作必须在 `pointerdown` 捕获阶段识别，并 `preventDefault` + `stopPropagation`。
-**Wrong**: 子元素等 `click` 才合并，父查看器已在 `pointerdown` 捕获指针并开始拖图。
-**Right**: 捕获阶段执行修饰键动作；普通 click 只处理无修饰键选择，父拖拽再加同条件 guard。
-**Why**: 交互优先级由最早消费指针序列的一方决定，不由后执行的 click handler 决定。
+**Rule**: 与拖拽竞争的 Ctrl/Shift 点击或框选要在 `pointerdown` 捕获阶段识别并阻止冒泡；用明确的交互状态管理完整 pointer 序列。
+**Wrong**: 等 `click` 才处理，或在 `pointerup` 仅凭 `hasPointerCapture()` 判断是否收尾；父查看器可能已拖图，浏览器也可能先释放 capture。
+**Right**: 捕获阶段置 active、阻止父级并按需 capture；move/up 以 active 为准，up 时仅在仍持有 capture 时释放，普通拖拽加同条件 guard。
+**Why**: 交互归属由最早消费序列的一方决定；pointer capture 是路由机制，不是可靠的业务状态。
 
 ### ★★ [2026-08-25] 旧异步请求的 finally 无条件复位 → 误关新一轮交互状态 (置信度: high, 命中: 1)
 
