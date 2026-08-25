@@ -13,7 +13,7 @@
 | I/O | [lessons-pattern-io.md](lessons-pattern-io.md) | 7 | 资源泄漏/外部输入校验/大文件OOM/编码假设/目录下载身份 + 5语言差异表 |
 | Type | [lessons-pattern-type.md](lessons-pattern-type.md) | 4 | 宽类型/any传染/null缩窄/enum穷举 |
 | Test | [lessons-pattern-test.md](lessons-pattern-test.md) | 4 | 水平切片/外部状态与模型缓存flaky/只测happy path/测试名无场景 + 5语言差异表 |
-| Perf | [lessons-pattern-perf.md](lessons-pattern-perf.md) | 4 | 不profile就优化/过早缓存/循环alloc/字符串拼接O(N²) + 4语言差异表 |
+| Perf | [lessons-pattern-perf.md](lessons-pattern-perf.md) | 5 | 不profile就优化/过早缓存/循环alloc/字符串拼接O(N²)/多模型推理执行器分配 + 4语言差异表 |
 | Null | [lessons-pattern-null.md](lessons-pattern-null.md) | 4 | 空值崩溃/不可能为空假设/falsy合并/可选链滥用 + 4语言差异表 + Go nil interface专题 + JS null vs undefined专题 |
 
 ## 语言差异速查

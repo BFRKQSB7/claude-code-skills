@@ -32,6 +32,12 @@
 **Why**: 大多语言字符串不可变。`+=` 每次创建新字符串复制全部内容 → O(N²)。`join` 一次分配 → O(N)。
 **Right**: Python `''.join(chunks)` / JS `Array.push + join` / Go `strings.Builder` / Rust `String::push_str`
 
+### ★ [2026-08-25] 推理执行器可用 ≠ 整条多模型流水线都适用 (置信度: high, 命中: 1)
+
+**Rule**: 多模型流水线按子模型验证执行器；重模型留 GPU，不兼容的小模型可固定 CPU，禁止一个子模型失败后把整套引擎永久降级。
+**Right**: 分别记录每个 session 的 provider，按后端要求设置会话选项，并用同一真实输入连续跑两次核对 provider、日志和热启动耗时。
+**Why**: provider 枚举只证明后端已安装；任一子模型的初始化/编码异常都可能触发库级 fallback，使后续任务无提示地变成纯 CPU。
+
 ---
 
 ## 语言差异
